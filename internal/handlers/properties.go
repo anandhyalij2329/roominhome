@@ -40,6 +40,8 @@ type propertyRequest struct {
 	PreferredTenants []string `json:"preferred_tenants"`
 	Amenities        []string `json:"amenities"`
 	ContactPhone     string   `json:"contact_phone"`
+	PhoneToken       string   `json:"phone_token"`
+	OwnerName        string   `json:"owner_name"`
 
 	Bedrooms         int     `json:"bedrooms"`
 	Bathrooms        int     `json:"bathrooms"`
@@ -183,6 +185,25 @@ func (a *API) CreateProperty(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusBadRequest, "invalid json")
 		return
 	}
+
+	phone, err := normalizePhone(req.ContactPhone)
+	if err != nil {
+		writeError(w, http.StatusBadRequest, "valid contact mobile number is required")
+		return
+	}
+	req.ContactPhone = phone
+	if !a.checkVerifiedToken("phone", phone, strings.TrimSpace(req.PhoneToken)) {
+		writeError(w, http.StatusBadRequest, "verify contact mobile with OTP first")
+		return
+	}
+
+	ownerName := strings.TrimSpace(req.OwnerName)
+	if ownerName == "" {
+		writeError(w, http.StatusBadRequest, "owner name is required")
+		return
+	}
+	_, _ = a.DB.Exec(`UPDATE users SET name = ?, phone = ? WHERE id = ?`, ownerName, phone, middleware.UserID(r))
+
 	p, msg := buildPropertyFromRequest(req, middleware.UserID(r), "")
 	if msg != "" {
 		writeError(w, http.StatusBadRequest, msg)

@@ -10,4 +10,5 @@ type API struct {
 	PublicBaseURL string
 	MaxPhotoBytes int64
 	MaxVideoBytes int64
+	OTPDemo       bool
 }

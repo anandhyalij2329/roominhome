@@ -6,15 +6,23 @@ if (!getToken() || user?.role !== "owner") {
 }
 
 const formWrap = document.getElementById("form-wrap");
+const toggleBtn = document.getElementById("toggle-form");
+const cancelBtn = document.getElementById("cancel-form");
 const ptype = document.getElementById("ptype");
 const latInput = document.getElementById("lat");
 const lngInput = document.getElementById("lng");
 const locStatus = document.getElementById("loc-status");
 const locCoords = document.getElementById("loc-coords");
+const ownerNameInput = document.getElementById("owner-name");
 let pendingFiles = [];
+let phoneToken = "";
+let listingCount = 0;
+
+if (user?.name) ownerNameInput.value = user.name;
+if (user?.phone) document.getElementById("contact-phone").value = String(user.phone).replace(/\D/g, "").slice(-10);
 
 const placeholders = {
-  room: "e.g. Private room in Baner",
+  room: "e.g. Room in Baner",
   home: "e.g. 2BHK family flat in Kothrud",
   pg: "e.g. Boys PG 2 sharing near college",
   shop: "e.g. Retail shop on JM Road",
@@ -27,8 +35,74 @@ const amenityHints = {
   shop: "power_backup, cctv, parking, washroom",
 };
 
-document.getElementById("toggle-form").addEventListener("click", () => {
-  formWrap.classList.toggle("hidden");
+function showForm(open) {
+  formWrap.hidden = !open;
+  if (open) {
+    document.getElementById("owner-help").textContent =
+      "Fill details, verify mobile, then save. Use current location for the pin.";
+  } else if (listingCount > 0) {
+    document.getElementById("owner-help").textContent = "Your registered properties are listed below.";
+  } else {
+    document.getElementById("owner-help").textContent = "Register your first property to get started.";
+  }
+}
+
+function syncFormVisibility() {
+  toggleBtn.hidden = listingCount === 0;
+  // No listings → show form. Has listings → hide form until Add property.
+  showForm(listingCount === 0);
+}
+
+toggleBtn.addEventListener("click", () => showForm(true));
+cancelBtn?.addEventListener("click", () => {
+  if (listingCount > 0) showForm(false);
+});
+
+document.getElementById("contact-phone").addEventListener("input", () => {
+  phoneToken = "";
+  document.getElementById("contact-ok").hidden = true;
+});
+
+document.getElementById("send-contact-otp").addEventListener("click", async () => {
+  const msg = document.getElementById("form-msg");
+  const demo = document.getElementById("contact-demo");
+  try {
+    phoneToken = "";
+    document.getElementById("contact-ok").hidden = true;
+    const phone = document.getElementById("contact-phone").value;
+    const data = await api("/api/auth/send-otp", {
+      method: "POST",
+      body: JSON.stringify({ channel: "phone", target: phone }),
+    });
+    demo.textContent = data.demo_code ? `Demo code: ${data.demo_code}` : data.message || "Code sent";
+    msg.textContent = "";
+  } catch (err) {
+    msg.className = "alert";
+    msg.textContent = err.message;
+  }
+});
+
+document.getElementById("verify-contact-otp").addEventListener("click", async () => {
+  const msg = document.getElementById("form-msg");
+  try {
+    const phone = document.getElementById("contact-phone").value;
+    const data = await api("/api/auth/verify-otp", {
+      method: "POST",
+      body: JSON.stringify({
+        channel: "phone",
+        target: phone,
+        code: document.getElementById("contact-otp").value,
+      }),
+    });
+    phoneToken = data.verified_token;
+    document.getElementById("contact-ok").hidden = false;
+    document.getElementById("contact-demo").textContent = "";
+    msg.className = "alert ok";
+    msg.textContent = "Mobile verified";
+  } catch (err) {
+    msg.className = "alert";
+    msg.textContent = err.message;
+  }
 });
 
 function applyTypeUI(type) {
@@ -195,6 +269,11 @@ document.getElementById("property-form").addEventListener("submit", async (e) =>
     msg.textContent = "Please click “Use current location” first.";
     return;
   }
+  if (!phoneToken) {
+    msg.className = "alert";
+    msg.textContent = "Verify contact mobile with OTP first.";
+    return;
+  }
 
   const tenants = [...document.querySelectorAll("#tenants label")]
     .filter((lab) => lab.style.display !== "none")
@@ -211,6 +290,7 @@ document.getElementById("property-form").addEventListener("submit", async (e) =>
     type,
     title: form.title.value,
     description: form.description.value,
+    owner_name: form.owner_name.value,
     address: form.address.value,
     locality: form.locality.value,
     city: form.city.value,
@@ -224,6 +304,7 @@ document.getElementById("property-form").addEventListener("submit", async (e) =>
     available_from: form.available_from.value,
     available_until: form.available_until.value,
     contact_phone: form.contact_phone.value,
+    phone_token: phoneToken,
     furnishing: val("furnishing"),
     sharing_type: val("sharing_type"),
     gender_preference: val("gender_preference") || "any",
@@ -258,15 +339,18 @@ document.getElementById("property-form").addEventListener("submit", async (e) =>
     msg.className = "alert ok";
     msg.textContent = "Property saved.";
     pendingFiles = [];
+    phoneToken = "";
+    document.getElementById("contact-ok").hidden = true;
     renderPreview();
     form.reset();
+    if (user?.name) ownerNameInput.value = user.name;
     latInput.value = "";
     lngInput.value = "";
     locCoords.textContent = "";
     locStatus.textContent = "Location not set yet.";
     applyTypeUI("room");
-    loadMine();
-    formWrap.classList.add("hidden");
+    await loadMine();
+    showForm(false);
   } catch (err) {
     msg.className = "alert";
     msg.textContent = err.message;
@@ -277,26 +361,30 @@ async function loadMine() {
   const el = document.getElementById("owner-list");
   try {
     const list = await api("/api/my/properties");
+    listingCount = list.length;
+    syncFormVisibility();
     if (!list.length) {
-      el.innerHTML = `<div class="empty">No listings yet. Click “Add property”.</div>`;
+      el.innerHTML = `<div class="empty-state">No listings yet. Fill the form above to register your first property.</div>`;
       return;
     }
     el.innerHTML = list
       .map(
         (p, i) => `
-      <div class="listing" style="animation-delay:${i * 0.05}s">
-        <a href="/property.html?id=${p.id}" class="listing-media"><img src="${coverUrl(p)}" alt="" /></a>
-        <div class="listing-body">
-          <div class="listing-type">${typeLabel(p.type)} · ${p.status}</div>
+      <div class="listing-card" style="animation-delay:${i * 0.05}s">
+        <a href="/property.html?id=${p.id}" class="thumb"><img src="${coverUrl(p)}" alt="" /></a>
+        <div class="body">
+          <div class="badge" style="position:static;display:inline-block;margin-bottom:0.35rem">${typeLabel(p.type)} · ${p.status}</div>
           <h3><a href="/property.html?id=${p.id}">${p.title}</a></h3>
-          <div class="meta">${locationLine(p)}</div>
-          <div class="rent">${formatRent(p.rent)}</div>
-          <div style="display:flex;gap:0.4rem;margin-top:0.5rem;flex-wrap:wrap">
-            <label class="btn btn-ghost" style="padding:0.45rem 0.7rem;cursor:pointer">
+          <div class="where">${locationLine(p)}</div>
+          <div class="price-row">
+            <div class="price">${formatRent(p.rent)} <small>/ mo</small></div>
+          </div>
+          <div style="display:flex;gap:0.4rem;margin-top:0.55rem;flex-wrap:wrap">
+            <label class="btn btn-ghost" style="padding:0.4rem 0.65rem;cursor:pointer;font-size:0.8rem">
               Add media
               <input type="file" multiple accept="image/*,video/*" hidden data-upload="${p.id}" />
             </label>
-            <button type="button" class="btn btn-danger" data-del="${p.id}" style="padding:0.45rem 0.7rem">Delete</button>
+            <button type="button" class="btn btn-danger" data-del="${p.id}" style="padding:0.4rem 0.65rem;font-size:0.8rem">Delete</button>
           </div>
         </div>
       </div>`
@@ -328,7 +416,7 @@ async function loadMine() {
       });
     });
   } catch (e) {
-    el.innerHTML = `<div class="empty">${e.message}</div>`;
+    el.innerHTML = `<div class="empty-state">${e.message}</div>`;
   }
 }
 

@@ -8,28 +8,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="stylesheet" href="/css/listings.css" />
+  <link rel="stylesheet" href="/css/owner.css" />
   <style>
     .type-fields.hidden { display: none !important; }
-    .loc-box {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-      align-items: center;
-      padding: 0.9rem 1rem;
-      border-radius: 12px;
-      background: rgba(31, 107, 87, 0.08);
-      border: 1px solid rgba(31, 107, 87, 0.18);
-    }
-    .loc-box .loc-status { flex: 1; min-width: 180px; color: var(--ink-soft); font-size: 0.92rem; }
-    .loc-box .loc-coords { font-size: 0.85rem; color: var(--jade-deep); font-weight: 600; }
-    .form-section-title {
-      font-weight: 700;
-      margin: 0.4rem 0 0.2rem;
-      color: var(--ink);
-    }
   </style>
 </head>
-<body>
+<body class="owner-page">
   <header class="site-nav">
     <div class="container inner">
       <a class="brand" href="/">Room<span>InHome</span></a>
@@ -37,17 +22,18 @@
     </div>
   </header>
 
-  <main class="container" style="padding-bottom:3rem">
-    <div class="page-hero" style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:1rem;align-items:end">
+  <main class="container owner-wrap">
+    <div class="page-hero owner-hero">
       <div>
         <h1>My listings</h1>
-        <p>Select type — only matching fields show. Use current location for the pin.</p>
+        <p id="owner-help">Add your property with location and contact details.</p>
       </div>
-      <button type="button" class="btn btn-primary" id="toggle-form">Add property</button>
+      <button type="button" class="btn btn-primary" id="toggle-form" hidden>Add property</button>
     </div>
 
-    <div id="form-wrap" class="panel hidden" style="margin-bottom:1.5rem">
-      <form id="property-form" class="stack">
+    <div id="form-wrap" class="panel owner-form-panel" hidden>
+    <form id="property-form" class="stack">
+        <div class="form-section-title">Basic information</div>
         <div class="form-grid">
           <label>Type
             <select name="type" id="ptype" required>
@@ -57,9 +43,27 @@
               <option value="shop">Shop</option>
             </select>
           </label>
-          <label>Title <input name="title" id="title-input" required placeholder="e.g. Private room in Baner" /></label>
+          <label>Owner name <input name="owner_name" id="owner-name" required placeholder="Your full name" /></label>
+          <label>Title <input name="title" id="title-input" required placeholder="e.g. Room in Baner" /></label>
           <label class="full">Description <textarea name="description" placeholder="Short details about the property"></textarea></label>
+        </div>
 
+        <div class="form-section-title">Contact (verify mobile)</div>
+        <div class="verify-block">
+          <label>Contact mobile
+            <input name="contact_phone" id="contact-phone" required inputmode="numeric" maxlength="10" placeholder="10-digit mobile" />
+          </label>
+          <div class="verify-actions">
+            <button type="button" class="btn btn-ghost" id="send-contact-otp">Send code</button>
+            <input id="contact-otp" inputmode="numeric" maxlength="6" placeholder="6-digit code" />
+            <button type="button" class="btn btn-primary" id="verify-contact-otp">Verify</button>
+            <span id="contact-ok" class="ok-pill" hidden>Verified</span>
+          </div>
+          <p class="demo-hint" id="contact-demo"></p>
+        </div>
+
+        <div class="form-section-title">Address</div>
+        <div class="form-grid">
           <label>Address <input name="address" required /></label>
           <label>Locality / area <input name="locality" required /></label>
           <label>City <input name="city" required /></label>
@@ -70,7 +74,6 @@
           <label>Deposit (₹) <input name="deposit" type="number" min="0" value="0" /></label>
           <label>Available from <input name="available_from" type="date" required /></label>
           <label>Available until <input name="available_until" type="date" required /></label>
-          <label>Contact phone <input name="contact_phone" /></label>
         </div>
 
         <!-- ROOM fields -->
@@ -237,13 +240,14 @@
         </div>
 
         <button class="btn btn-primary" type="submit">Save property</button>
+        <button type="button" class="btn btn-ghost" id="cancel-form">Cancel</button>
         <div id="form-msg"></div>
       </form>
     </div>
 
-    <div id="owner-list" class="grid"><div class="empty">Loading…</div></div>
+    <div id="owner-list" class="listing-grid owner-list"><div class="empty-state">Loading…</div></div>
 
-    <section style="margin-top:2rem">
+    <section class="owner-bookings">
       <div class="section-head"><h2>Booking requests</h2><p>Approve or reject seeker requests on your listings.</p></div>
       <div id="owner-bookings" class="stack"></div>
     </section>

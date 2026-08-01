@@ -14,11 +14,13 @@ import (
 )
 
 type registerRequest struct {
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
-	Role     string `json:"role"` // owner | seeker
-	Phone    string `json:"phone"`
+	Name           string `json:"name"`
+	Email          string `json:"email"`
+	Password       string `json:"password"`
+	Role           string `json:"role"` // owner | seeker
+	Phone          string `json:"phone"`
+	EmailToken     string `json:"email_token"`
+	PhoneToken     string `json:"phone_token"`
 }
 
 type loginRequest struct {
@@ -43,6 +45,29 @@ func (a *API) Register(w http.ResponseWriter, r *http.Request) {
 
 	if req.Name == "" || req.Email == "" || len(req.Password) < 6 {
 		writeError(w, http.StatusBadRequest, "name, email and password (min 6) are required")
+		return
+	}
+
+	emailNorm, err := normalizeEmail(req.Email)
+	if err != nil {
+		writeError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+	req.Email = emailNorm
+
+	phoneNorm, err := normalizePhone(req.Phone)
+	if err != nil {
+		writeError(w, http.StatusBadRequest, "valid mobile number is required")
+		return
+	}
+	req.Phone = phoneNorm
+
+	if !a.checkVerifiedToken("email", req.Email, strings.TrimSpace(req.EmailToken)) {
+		writeError(w, http.StatusBadRequest, "verify your email with OTP first")
+		return
+	}
+	if !a.checkVerifiedToken("phone", req.Phone, strings.TrimSpace(req.PhoneToken)) {
+		writeError(w, http.StatusBadRequest, "verify your mobile number with OTP first")
 		return
 	}
 	// landlord/tenant aliases for convenience

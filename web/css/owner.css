@@ -1,0 +1,158 @@
+/* Owner dashboard — compact mobile + desktop */
+body.owner-page {
+  background: var(--paper);
+}
+
+.owner-wrap {
+  padding: 1rem 0 3rem;
+}
+
+.owner-hero {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 0 0.85rem;
+}
+
+.owner-hero h1 {
+  font-size: clamp(1.45rem, 4.5vw, 2.2rem);
+  margin: 0 0 0.15rem;
+}
+
+.owner-hero p {
+  font-size: 0.85rem;
+}
+
+.owner-hero .btn {
+  flex: 0 0 auto;
+  padding: 0.5rem 0.9rem;
+  font-size: 0.88rem;
+  min-height: 40px;
+}
+
+.owner-form-panel {
+  margin-bottom: 1.25rem;
+  padding: 1rem;
+}
+
+.owner-form-panel .form-section-title {
+  font-weight: 700;
+  margin: 0.55rem 0 0.35rem;
+  color: var(--navy);
+  font-size: 0.95rem;
+}
+
+.owner-form-panel .form-grid {
+  gap: 0.65rem;
+}
+
+.owner-form-panel label {
+  font-size: 0.78rem;
+}
+
+.owner-form-panel input,
+.owner-form-panel select,
+.owner-form-panel textarea {
+  padding: 0.58rem 0.7rem;
+  font-size: 0.88rem;
+  border-radius: 9px;
+  background: #eef2f7;
+  border: 1px solid rgba(11, 28, 51, 0.12);
+}
+
+.verify-block {
+  display: grid;
+  gap: 0.45rem;
+  margin-bottom: 0.35rem;
+}
+
+.verify-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.verify-actions input {
+  flex: 1 1 100px;
+  max-width: 130px;
+  min-width: 90px;
+}
+
+.verify-actions .btn {
+  padding: 0.5rem 0.7rem;
+  font-size: 0.82rem;
+  min-height: 38px;
+}
+
+.ok-pill {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #0b1c33;
+  background: rgba(230, 180, 34, 0.25);
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+}
+
+.demo-hint {
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+  margin: 0;
+}
+
+.loc-box {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  align-items: center;
+  padding: 0.75rem 0.85rem;
+  border-radius: 12px;
+  background: rgba(11, 28, 51, 0.06);
+  border: 1px solid rgba(11, 28, 51, 0.12);
+}
+
+.loc-box .loc-status {
+  flex: 1;
+  min-width: 140px;
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+}
+
+.loc-box .loc-coords {
+  font-size: 0.8rem;
+  color: var(--navy);
+  font-weight: 600;
+}
+
+.owner-list {
+  margin-top: 0.5rem;
+}
+
+.owner-bookings {
+  margin-top: 1.75rem;
+}
+
+.owner-bookings .section-head h2 {
+  font-size: 1.25rem;
+}
+
+@media (max-width: 700px) {
+  .owner-wrap {
+    padding: 0.75rem 0 2.5rem;
+  }
+
+  .owner-form-panel {
+    padding: 0.8rem;
+  }
+
+  .owner-form-panel .form-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .owner-form-panel .form-grid .full {
+    grid-column: 1 / -1;
+  }
+}
