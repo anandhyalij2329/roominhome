@@ -77,14 +77,12 @@ async function load() {
                 <span>/ month</span>
               </div>
               <p class="prop-meta">Deposit ${formatRent(p.deposit)} · ${String(p.available_from).slice(0, 10)} → ${String(p.available_until).slice(0, 10)}</p>
-              <div class="distance-badge" id="distance-line">Distance: detecting…</div>
             </div>
 
             <div class="prop-card address-block">
               <h3 class="prop-section-title">Address</h3>
               <p>${fullAddress(p)}</p>
               ${p.landmark ? `<p class="muted">Landmark: ${p.landmark}</p>` : ""}
-              ${directions ? `<a class="btn btn-ghost" style="margin-top:0.55rem" href="${directions}" target="_blank" rel="noopener">Get directions</a>` : ""}
             </div>
 
             <div class="prop-card">
@@ -113,11 +111,6 @@ async function load() {
                       ? `<a class="btn btn-primary" href="${callLink}">Call</a>`
                       : `<span class="btn btn-ghost" style="opacity:0.6;pointer-events:none">No phone</span>`
                   }
-                  ${
-                    directions
-                      ? `<a class="btn btn-ghost" href="${directions}" target="_blank" rel="noopener">Directions</a>`
-                      : ""
-                  }
                 </div>
                 ${phone ? `<p class="muted" style="margin:0.55rem 0 0;font-size:0.88rem">${phone}</p>` : ""}
               </div>
@@ -130,9 +123,9 @@ async function load() {
               <h2>On the map</h2>
               <div class="prop-map-actions">
                 ${directions ? `<a class="btn btn-primary" href="${directions}" target="_blank" rel="noopener">Directions</a>` : ""}
-                ${p.google_map_url ? `<a class="btn btn-ghost" href="${p.google_map_url}" target="_blank" rel="noopener">Open map</a>` : ""}
               </div>
             </div>
+            <div class="distance-badge" id="distance-line" style="margin:0 0 0.75rem">Distance: detecting…</div>
             <div id="prop-map" class="map-box"></div>
           </div>
         </div>
@@ -153,16 +146,35 @@ async function load() {
       btn.classList.add("active");
     });
 
-    if (p.latitude || p.longitude) {
-      const map = L.map("prop-map").setView([p.latitude, p.longitude], 15);
+    const hasCoords =
+      Number.isFinite(Number(p.latitude)) &&
+      Number.isFinite(Number(p.longitude)) &&
+      !(Number(p.latitude) === 0 && Number(p.longitude) === 0);
+
+    if (hasCoords) {
+      const lat = Number(p.latitude);
+      const lng = Number(p.longitude);
+      const map = L.map("prop-map", { scrollWheelZoom: false }).setView([lat, lng], 15);
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: "&copy; OpenStreetMap",
+        maxZoom: 19,
       }).addTo(map);
-      L.marker([p.latitude, p.longitude]).addTo(map);
-      setTimeout(() => map.invalidateSize(), 200);
-      showDistance(p, map);
+      L.marker([lat, lng]).addTo(map).bindPopup(p.title || "Property");
+
+      const fixMap = () => {
+        map.invalidateSize();
+      };
+      setTimeout(fixMap, 100);
+      setTimeout(fixMap, 400);
+      setTimeout(fixMap, 900);
+      window.addEventListener("resize", fixMap, { passive: true });
+
+      showDistance(p, map, lat, lng);
     } else {
-      document.getElementById("distance-line").textContent = "Distance unavailable";
+      const line = document.getElementById("distance-line");
+      if (line) line.textContent = "Location not set for this property";
+      const mapEl = document.getElementById("prop-map");
+      if (mapEl) mapEl.innerHTML = `<div class="empty" style="padding:2rem;text-align:center">Map unavailable</div>`;
     }
 
     renderBooking(p);
@@ -171,45 +183,61 @@ async function load() {
   }
 }
 
-function showDistance(p, map) {
+function showDistance(p, map, propLat, propLng) {
   const line = document.getElementById("distance-line");
+  if (!line) return;
+
   if (!navigator.geolocation) {
-    line.textContent = "Enable location for distance";
+    line.textContent = "Location not supported on this device";
     return;
   }
+
+  line.textContent = "Getting distance…";
+
   navigator.geolocation.getCurrentPosition(
     (pos) => {
       const lat = pos.coords.latitude;
       const lng = pos.coords.longitude;
-      const km = Math.round(haversineKm(lat, lng, p.latitude, p.longitude) * 10) / 10;
+      const km = Math.round(haversineKm(lat, lng, propLat, propLng) * 10) / 10;
       line.textContent = `${km} km from you`;
+
       L.circleMarker([lat, lng], {
-        radius: 7,
-        color: "#1f6b57",
-        fillColor: "#1f6b57",
-        fillOpacity: 0.85,
+        radius: 8,
+        color: "#0b1c33",
+        fillColor: "#e6b422",
+        fillOpacity: 0.95,
+        weight: 2,
       })
         .addTo(map)
         .bindPopup("You are here");
+
       L.polyline(
         [
           [lat, lng],
-          [p.latitude, p.longitude],
+          [propLat, propLng],
         ],
-        { color: "#1f6b57", weight: 3, opacity: 0.7 }
+        { color: "#0b1c33", weight: 3, opacity: 0.75 }
       ).addTo(map);
+
       map.fitBounds(
         [
           [lat, lng],
-          [p.latitude, p.longitude],
+          [propLat, propLng],
         ],
-        { padding: [40, 40] }
+        { padding: [48, 48], maxZoom: 15 }
       );
+      setTimeout(() => map.invalidateSize(), 150);
     },
-    () => {
-      line.textContent = "Allow location for distance";
+    (err) => {
+      if (err && err.code === 1) {
+        line.textContent = "Allow location to see distance";
+      } else if (err && err.code === 3) {
+        line.textContent = "Location timed out — try again";
+      } else {
+        line.textContent = "Could not get your location";
+      }
     },
-    { enableHighAccuracy: true, timeout: 10000 }
+    { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 }
   );
 }
 
