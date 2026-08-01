@@ -475,8 +475,21 @@ textarea {
 /* Listing tiles — interaction containers */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 1.1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+@media (min-width: 900px) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.1rem;
+  }
+}
+
+@media (min-width: 1100px) {
+  .grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 }
 
 .listing {
@@ -759,8 +772,8 @@ textarea {
 }
 
 .footer {
-  padding: 2.5rem 0 2rem;
-  border-top: 1px solid var(--line);
+  padding: 2.75rem 0 2rem;
+  border-top: 0;
   background: var(--navy);
   color: rgba(244, 247, 251, 0.75);
   font-size: 0.92rem;
@@ -776,6 +789,59 @@ textarea {
 
 .footer .brand {
   color: #f4f7fb;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  gap: 1.5rem;
+}
+
+@media (max-width: 800px) {
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.footer-grid .brand {
+  color: #fff;
+  display: inline-block;
+  margin-bottom: 0.5rem;
+}
+
+.footer-grid .brand span {
+  color: var(--gold);
+}
+
+.footer-grid h4 {
+  margin: 0 0 0.65rem;
+  color: #fff;
+  font-size: 0.95rem;
+}
+
+.footer-grid a {
+  display: block;
+  margin-bottom: 0.4rem;
+  color: rgba(244, 247, 251, 0.7);
+  font-size: 0.9rem;
+}
+
+.footer-grid a:hover {
+  color: var(--gold);
+}
+
+.footer-grid p {
+  margin: 0;
+  line-height: 1.45;
+  color: rgba(244, 247, 251, 0.7);
+  font-size: 0.9rem;
+}
+
+.footer-copy {
+  margin-top: 1.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(244, 247, 251, 0.12);
+  font-size: 0.85rem;
 }
 
 .dropzone {
