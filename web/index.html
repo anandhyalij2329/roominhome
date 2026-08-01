@@ -242,7 +242,7 @@
         const items = list || [];
         document.getElementById("stat-props").textContent = items.length + "+";
         const isMobile = window.matchMedia("(max-width: 700px)").matches;
-        const show = items.slice(0, isMobile ? 2 : 8);
+        const show = items.slice(0, isMobile ? 4 : 8);
         if (!show.length) {
           el.innerHTML = `<div class="empty">No listings yet. <a href="/register.html?role=owner">List the first property</a>.</div>`;
           return;
