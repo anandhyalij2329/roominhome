@@ -252,10 +252,11 @@ func (a *API) DeleteProperty(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusInternalServerError, "could not load property")
 		return
 	}
-	if existing.OwnerID != middleware.UserID(r) {
+	if existing.OwnerID != middleware.UserID(r) && middleware.Role(r) != "admin" {
 		writeError(w, http.StatusForbidden, "only the owner can delete this property")
 		return
 	}
+	_, _ = a.DB.Exec(`DELETE FROM bookings WHERE property_id = ?`, id)
 	_, _ = a.DB.Exec(`DELETE FROM media WHERE property_id = ?`, id)
 	_, err = a.DB.Exec(`DELETE FROM properties WHERE id = ?`, id)
 	if err != nil {

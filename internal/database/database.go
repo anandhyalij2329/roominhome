@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"fmt"
+	"strings"
 
 	_ "modernc.org/sqlite"
 )
@@ -30,7 +31,7 @@ CREATE TABLE IF NOT EXISTS users (
 	name TEXT NOT NULL,
 	email TEXT NOT NULL UNIQUE,
 	password_hash TEXT NOT NULL,
-	role TEXT NOT NULL CHECK(role IN ('owner', 'seeker')),
+	role TEXT NOT NULL CHECK(role IN ('owner', 'seeker', 'admin')),
 	phone TEXT DEFAULT '',
 	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -124,5 +125,46 @@ CREATE INDEX IF NOT EXISTS idx_media_property ON media(property_id);
 	if _, err := db.Exec(schema); err != nil {
 		return fmt.Errorf("migrate: %w", err)
 	}
+	if err := ensureAdminRoleAllowed(db); err != nil {
+		return err
+	}
 	return nil
+}
+
+// SQLite CHECK on users.role cannot be altered in place — rebuild if needed.
+func ensureAdminRoleAllowed(db *sql.DB) error {
+	var sqlText string
+	err := db.QueryRow(`SELECT sql FROM sqlite_master WHERE type='table' AND name='users'`).Scan(&sqlText)
+	if err != nil {
+		return nil
+	}
+	if strings.Contains(sqlText, "'admin'") {
+		return nil
+	}
+	tx, err := db.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+	stmts := []string{
+		`CREATE TABLE users_new (
+			id TEXT PRIMARY KEY,
+			name TEXT NOT NULL,
+			email TEXT NOT NULL UNIQUE,
+			password_hash TEXT NOT NULL,
+			role TEXT NOT NULL CHECK(role IN ('owner', 'seeker', 'admin')),
+			phone TEXT DEFAULT '',
+			created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+		)`,
+		`INSERT INTO users_new (id, name, email, password_hash, role, phone, created_at)
+			SELECT id, name, email, password_hash, role, phone, created_at FROM users`,
+		`DROP TABLE users`,
+		`ALTER TABLE users_new RENAME TO users`,
+	}
+	for _, s := range stmts {
+		if _, err := tx.Exec(s); err != nil {
+			return fmt.Errorf("admin role migrate: %w", err)
+		}
+	}
+	return tx.Commit()
 }

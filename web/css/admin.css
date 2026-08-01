@@ -1,0 +1,238 @@
+:root {
+  --admin-max: 1180px;
+}
+
+.admin-page .container {
+  width: min(100% - 2rem, var(--admin-max));
+}
+
+.admin-wrap {
+  padding: 1.5rem 0 3rem;
+}
+
+.admin-hero {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.admin-hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  margin: 0 0 0.25rem;
+}
+
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat-tile {
+  background: linear-gradient(165deg, #fff 0%, var(--sky) 100%);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.9rem 1rem;
+}
+
+.stat-tile .label {
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.stat-tile .value {
+  font-family: var(--font-display);
+  font-size: 1.65rem;
+  font-weight: 600;
+  color: var(--navy);
+  line-height: 1.2;
+  margin-top: 0.2rem;
+}
+
+.stat-tile .sub {
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+  margin-top: 0.15rem;
+}
+
+.admin-tabs {
+  display: flex;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.admin-tab {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0.65rem 1rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+
+.admin-tab.is-active {
+  color: var(--navy);
+  border-bottom-color: var(--gold);
+}
+
+.admin-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.85rem;
+}
+
+.admin-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.chip {
+  appearance: none;
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 999px;
+  padding: 0.35rem 0.8rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+
+.chip.is-active {
+  background: var(--navy);
+  border-color: var(--navy);
+  color: #fff;
+}
+
+#prop-search {
+  min-width: min(100%, 240px);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.5rem 0.75rem;
+  background: #fff;
+}
+
+.admin-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+.admin-table th,
+.admin-table td {
+  text-align: left;
+  padding: 0.75rem 0.9rem;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+
+.admin-table th {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+  background: var(--sky);
+  white-space: nowrap;
+}
+
+.admin-table tr:last-child td {
+  border-bottom: 0;
+}
+
+.admin-table .title-cell {
+  font-weight: 600;
+  color: var(--navy);
+}
+
+.admin-table .title-cell a:hover {
+  color: var(--jade);
+}
+
+.badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.45rem;
+  border-radius: 6px;
+  background: var(--sky);
+  color: var(--navy);
+}
+
+.badge-room { background: #dce8f5; }
+.badge-home { background: #ddeee3; }
+.badge-pg { background: #f5e8d0; }
+.badge-shop { background: #e8e0f0; }
+.badge-owner { background: #dce8f5; }
+.badge-seeker { background: #ddeee3; }
+.badge-admin { background: #f5e8d0; }
+
+.row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.btn-danger {
+  background: transparent;
+  color: var(--danger);
+  border: 1px solid rgba(155, 44, 44, 0.35);
+  border-radius: 8px;
+  padding: 0.3rem 0.65rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-danger:hover {
+  background: rgba(155, 44, 44, 0.08);
+}
+
+.admin-empty {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: var(--ink-soft);
+}
+
+.is-new {
+  color: #0a6b3c;
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-left: 0.35rem;
+}
+
+@media (max-width: 700px) {
+  .admin-hero {
+    flex-direction: column;
+  }
+
+  .admin-table th:nth-child(n + 4),
+  .admin-table td:nth-child(n + 4) {
+    /* keep all columns but allow scroll */
+  }
+
+  #prop-search {
+    width: 100%;
+  }
+}

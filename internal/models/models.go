@@ -7,6 +7,7 @@ type Role string
 const (
 	RoleOwner  Role = "owner"  // lists properties
 	RoleSeeker Role = "seeker" // searches and books rentals
+	RoleAdmin  Role = "admin"  // full site management
 )
 
 type User struct {

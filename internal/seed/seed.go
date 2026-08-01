@@ -24,9 +24,42 @@ func SeedIfEmpty(db *sql.DB) (int, error) {
 		if err := EnsureSeedMedia(db); err != nil {
 			return 0, err
 		}
+		if err := EnsureAdmin(db); err != nil {
+			return 0, err
+		}
 		return 0, nil
 	}
-	return Run(db)
+	n, err := Run(db)
+	if err != nil {
+		return n, err
+	}
+	if err := EnsureAdmin(db); err != nil {
+		return n, err
+	}
+	return n, nil
+}
+
+// EnsureAdmin creates the default admin account if missing.
+// Login: admin@roominhome.test / admin123
+func EnsureAdmin(db *sql.DB) error {
+	const email = "admin@roominhome.test"
+	var id string
+	err := db.QueryRow(`SELECT id FROM users WHERE email = ?`, email).Scan(&id)
+	if err == nil {
+		return nil
+	}
+	if err != sql.ErrNoRows {
+		return err
+	}
+	hash, err := auth.HashPassword("admin123")
+	if err != nil {
+		return err
+	}
+	_, err = db.Exec(
+		`INSERT INTO users (id, name, email, password_hash, role, phone, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+		"seed-admin-1", "Site Admin", email, hash, "admin", "", time.Now().UTC(),
+	)
+	return err
 }
 
 // ClearSeedContacts removes demo contact numbers from seed users/properties.

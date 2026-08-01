@@ -121,6 +121,9 @@ function renderNav(active) {
   if (user?.role === "seeker") {
     html += `<a href="/bookings.html" class="${active === "bookings" ? "is-active" : ""}">Bookings</a>`;
   }
+  if (user?.role === "admin") {
+    html += `<a href="/admin.html" class="${active === "admin" ? "is-active" : ""}">Admin</a>`;
+  }
 
   if (user) {
     html += `<span class="muted nav-user">${user.name}</span>`;

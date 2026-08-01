@@ -42,7 +42,9 @@
           body: JSON.stringify({ email: fd.get("email"), password: fd.get("password") }),
         });
         setSession(data.token, data.user);
-        location.href = data.user.role === "owner" ? "/owner.html" : "/browse.html";
+        if (data.user.role === "admin") location.href = "/admin.html";
+        else if (data.user.role === "owner") location.href = "/owner.html";
+        else location.href = "/browse.html";
       } catch (err) {
         msg.className = "alert";
         msg.textContent = err.message;

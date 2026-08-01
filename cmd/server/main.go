@@ -56,6 +56,7 @@ func main() {
 	auth := middleware.Auth(cfg.JWTSecret)
 	ownerOnly := middleware.RequireRole("owner")
 	seekerOnly := middleware.RequireRole("seeker")
+	adminOnly := middleware.RequireRole("admin")
 
 	mux.Handle("GET /api/me", auth(http.HandlerFunc(api.Me)))
 
@@ -63,8 +64,14 @@ func main() {
 	mux.HandleFunc("GET /api/properties/{id}", api.GetProperty)
 	mux.Handle("POST /api/properties", auth(ownerOnly(http.HandlerFunc(api.CreateProperty))))
 	mux.Handle("PUT /api/properties/{id}", auth(ownerOnly(http.HandlerFunc(api.UpdateProperty))))
-	mux.Handle("DELETE /api/properties/{id}", auth(ownerOnly(http.HandlerFunc(api.DeleteProperty))))
+	mux.Handle("DELETE /api/properties/{id}", auth(middleware.RequireRole("owner", "admin")(http.HandlerFunc(api.DeleteProperty))))
 	mux.Handle("GET /api/my/properties", auth(ownerOnly(http.HandlerFunc(api.MyProperties))))
+
+	mux.Handle("GET /api/admin/stats", auth(adminOnly(http.HandlerFunc(api.AdminStats))))
+	mux.Handle("GET /api/admin/users", auth(adminOnly(http.HandlerFunc(api.AdminListUsers))))
+	mux.Handle("DELETE /api/admin/users/{id}", auth(adminOnly(http.HandlerFunc(api.AdminDeleteUser))))
+	mux.Handle("GET /api/admin/properties", auth(adminOnly(http.HandlerFunc(api.AdminListProperties))))
+	mux.Handle("DELETE /api/admin/properties/{id}", auth(adminOnly(http.HandlerFunc(api.AdminDeleteProperty))))
 
 	mux.HandleFunc("GET /api/properties/{id}/media", api.ListMedia)
 	mux.Handle("POST /api/properties/{id}/media", auth(ownerOnly(http.HandlerFunc(api.UploadMedia))))
