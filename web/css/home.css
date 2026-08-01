@@ -154,9 +154,22 @@ body.home .view-all-wrap {
   }
 
   body.home #home-listings.grid {
-    grid-template-columns: 1fr;
-    max-width: 26rem;
-    margin-inline: auto;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.65rem;
+    max-width: none;
+    margin-inline: 0;
+  }
+
+  body.home #home-listings .listing-body h3 {
+    font-size: 0.92rem;
+  }
+
+  body.home #home-listings .listing .rent {
+    font-size: 0.88rem;
+  }
+
+  body.home #home-listings .meta {
+    font-size: 0.78rem;
   }
 }
 
