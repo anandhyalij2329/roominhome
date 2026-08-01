@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Collection — RoomInHome</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="stylesheet" href="/css/collection.css" />
+</head>
+<body class="collection-page">
+  <header class="site-nav">
+    <div class="container inner">
+      <a class="brand" href="/">Room<span>InHome</span></a>
+      <nav class="nav-links" id="nav-links"></nav>
+    </div>
+  </header>
+
+  <section class="collection-hero" id="hero">
+    <div class="collection-hero-media">
+      <img id="hero-img" src="" alt="" />
+    </div>
+    <div class="collection-hero-scrim"></div>
+    <div class="collection-hero-content">
+      <div class="eyebrow">Collection</div>
+      <h1 id="hero-title">—</h1>
+      <p id="hero-desc"></p>
+      <div class="collection-count" id="hero-count">Loading…</div>
+    </div>
+  </section>
+
+  <main class="container" style="padding:1.75rem 0 3rem">
+    <div class="chip-nav">
+      <a href="/categories.html">All</a>
+      <a href="/collection.html?type=room" data-chip="room">Room</a>
+      <a href="/collection.html?type=home" data-chip="home">Home</a>
+      <a href="/collection.html?type=pg" data-chip="pg">PG</a>
+      <a href="/collection.html?type=shop" data-chip="shop">Shop</a>
+    </div>
+
+    <div class="sub-options" id="sub-options"></div>
+
+    <form class="panel collection-toolbar" id="filters">
+      <label>City <input name="city" placeholder="Pune" /></label>
+      <label>Locality <input name="locality" placeholder="Baner" /></label>
+      <label>For
+        <select name="preferred_tenant">
+          <option value="">Anyone</option>
+          <option value="family">Family</option>
+          <option value="bachelor">Bachelor</option>
+          <option value="couple">Couple</option>
+          <option value="student">Student</option>
+          <option value="company">Company</option>
+        </select>
+      </label>
+      <label>Min rent <input name="min_rent" type="number" min="0" /></label>
+      <label>Max rent <input name="max_rent" type="number" min="0" /></label>
+      <label>&nbsp;<button class="btn btn-primary" type="submit" style="width:100%">Filter</button></label>
+    </form>
+
+    <div class="grid" id="results"><div class="empty">Loading collection…</div></div>
+  </main>
+
+  <footer class="footer">
+    <div class="container" style="padding:2rem 0">
+      <a href="/categories.html" style="color:#e6b422;font-weight:600">← All collections</a>
+    </div>
+  </footer>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/collection.js"></script>
+</body>
+</html>

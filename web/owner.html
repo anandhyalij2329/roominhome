@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>My listings — RoomInHome</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css" />
+  <style>
+    .type-fields.hidden { display: none !important; }
+    .loc-box {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+      padding: 0.9rem 1rem;
+      border-radius: 12px;
+      background: rgba(31, 107, 87, 0.08);
+      border: 1px solid rgba(31, 107, 87, 0.18);
+    }
+    .loc-box .loc-status { flex: 1; min-width: 180px; color: var(--ink-soft); font-size: 0.92rem; }
+    .loc-box .loc-coords { font-size: 0.85rem; color: var(--jade-deep); font-weight: 600; }
+    .form-section-title {
+      font-weight: 700;
+      margin: 0.4rem 0 0.2rem;
+      color: var(--ink);
+    }
+  </style>
+</head>
+<body>
+  <header class="site-nav">
+    <div class="container inner">
+      <a class="brand" href="/">Room<span>InHome</span></a>
+      <nav class="nav-links" id="nav-links"></nav>
+    </div>
+  </header>
+
+  <main class="container" style="padding-bottom:3rem">
+    <div class="page-hero" style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:1rem;align-items:end">
+      <div>
+        <h1>My listings</h1>
+        <p>Select type — only matching fields show. Use current location for the pin.</p>
+      </div>
+      <button type="button" class="btn btn-primary" id="toggle-form">Add property</button>
+    </div>
+
+    <div id="form-wrap" class="panel hidden" style="margin-bottom:1.5rem">
+      <form id="property-form" class="stack">
+        <div class="form-grid">
+          <label>Type
+            <select name="type" id="ptype" required>
+              <option value="room">Room</option>
+              <option value="home">Home</option>
+              <option value="pg">PG</option>
+              <option value="shop">Shop</option>
+            </select>
+          </label>
+          <label>Title <input name="title" id="title-input" required placeholder="e.g. Private room in Baner" /></label>
+          <label class="full">Description <textarea name="description" placeholder="Short details about the property"></textarea></label>
+
+          <label>Address <input name="address" required /></label>
+          <label>Locality / area <input name="locality" required /></label>
+          <label>City <input name="city" required /></label>
+          <label>State <input name="state" placeholder="Maharashtra" /></label>
+          <label>Pincode <input name="pincode" /></label>
+          <label>Landmark <input name="landmark" /></label>
+          <label>Rent (₹) <input name="rent" type="number" min="1" required /></label>
+          <label>Deposit (₹) <input name="deposit" type="number" min="0" value="0" /></label>
+          <label>Available from <input name="available_from" type="date" required /></label>
+          <label>Available until <input name="available_until" type="date" required /></label>
+          <label>Contact phone <input name="contact_phone" /></label>
+        </div>
+
+        <!-- ROOM fields -->
+        <div class="type-fields" data-types="room">
+          <div class="form-section-title">Room details</div>
+          <div class="form-grid">
+            <label>Sharing
+              <select name="sharing_type">
+                <option value="private">Private</option>
+                <option value="1_sharing">1 sharing</option>
+                <option value="2_sharing">2 sharing</option>
+                <option value="3_sharing">3 sharing</option>
+                <option value="4_sharing">4 sharing</option>
+              </select>
+            </label>
+            <label>Gender
+              <select name="gender_preference">
+                <option value="any">Any</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+              </select>
+            </label>
+            <label>Furnishing
+              <select name="furnishing">
+                <option value="">—</option>
+                <option value="furnished">Furnished</option>
+                <option value="semi_furnished">Semi furnished</option>
+                <option value="unfurnished">Unfurnished</option>
+              </select>
+            </label>
+            <label>Bathrooms <input name="bathrooms" type="number" min="0" value="1" /></label>
+            <label>Area (sq ft) <input name="area_sq_ft" type="number" min="0" step="0.1" /></label>
+            <label>Floor <input name="floor" type="number" value="0" /></label>
+          </div>
+        </div>
+
+        <!-- HOME fields -->
+        <div class="type-fields hidden" data-types="home">
+          <div class="form-section-title">Home details</div>
+          <div class="form-grid">
+            <label>BHK <input name="bhk" type="number" min="1" value="2" /></label>
+            <label>Bedrooms <input name="bedrooms" type="number" min="0" value="2" /></label>
+            <label>Bathrooms <input name="bathrooms" type="number" min="0" value="2" /></label>
+            <label>Area (sq ft) <input name="area_sq_ft" type="number" min="0" step="0.1" /></label>
+            <label>Furnishing
+              <select name="furnishing">
+                <option value="">—</option>
+                <option value="furnished">Furnished</option>
+                <option value="semi_furnished">Semi furnished</option>
+                <option value="unfurnished">Unfurnished</option>
+              </select>
+            </label>
+            <label>Floor <input name="floor" type="number" value="1" /></label>
+            <label>Total floors <input name="total_floors" type="number" value="4" /></label>
+          </div>
+        </div>
+
+        <!-- PG fields -->
+        <div class="type-fields hidden" data-types="pg">
+          <div class="form-section-title">PG details</div>
+          <div class="form-grid">
+            <label>Sharing
+              <select name="sharing_type" required>
+                <option value="1_sharing">1 sharing</option>
+                <option value="2_sharing" selected>2 sharing</option>
+                <option value="3_sharing">3 sharing</option>
+                <option value="4_sharing">4 sharing</option>
+                <option value="private">Private</option>
+              </select>
+            </label>
+            <label>Gender
+              <select name="gender_preference">
+                <option value="any">Any</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+              </select>
+            </label>
+            <label>Food type
+              <select name="food_type">
+                <option value="">—</option>
+                <option value="veg">Veg</option>
+                <option value="non_veg">Non-veg</option>
+                <option value="both">Both</option>
+              </select>
+            </label>
+            <label>Furnishing
+              <select name="furnishing">
+                <option value="furnished">Furnished</option>
+                <option value="semi_furnished">Semi furnished</option>
+                <option value="unfurnished">Unfurnished</option>
+              </select>
+            </label>
+            <label>Bathrooms <input name="bathrooms" type="number" min="0" value="1" /></label>
+            <label>Area (sq ft) <input name="area_sq_ft" type="number" min="0" step="0.1" /></label>
+          </div>
+        </div>
+
+        <!-- SHOP fields -->
+        <div class="type-fields hidden" data-types="shop">
+          <div class="form-section-title">Shop details</div>
+          <div class="form-grid">
+            <label>Shop category
+              <select name="shop_category">
+                <option value="retail">Retail</option>
+                <option value="office">Office</option>
+                <option value="warehouse">Warehouse</option>
+                <option value="showroom">Showroom</option>
+                <option value="clinic">Clinic</option>
+                <option value="other">Other</option>
+              </select>
+            </label>
+            <label>Area (sq ft) <input name="area_sq_ft" type="number" min="1" step="0.1" required /></label>
+            <label>Frontage (ft) <input name="frontage_ft" type="number" min="0" step="0.1" /></label>
+            <label>Floor <input name="floor" type="number" value="0" /></label>
+            <label>Total floors <input name="total_floors" type="number" value="1" /></label>
+          </div>
+        </div>
+
+        <div>
+          <div class="muted" style="margin-bottom:0.4rem;font-weight:600">Preferred tenants</div>
+          <div class="check-row" id="tenants">
+            <label data-tenant="family"><input type="checkbox" value="family" /> Family</label>
+            <label data-tenant="bachelor"><input type="checkbox" value="bachelor" /> Bachelor</label>
+            <label data-tenant="couple"><input type="checkbox" value="couple" /> Couple</label>
+            <label data-tenant="student"><input type="checkbox" value="student" /> Student</label>
+            <label data-tenant="anyone"><input type="checkbox" value="anyone" checked /> Anyone</label>
+            <label data-tenant="company"><input type="checkbox" value="company" /> Company</label>
+          </div>
+        </div>
+
+        <div>
+          <div class="muted" style="margin-bottom:0.4rem;font-weight:600">Parking & extras</div>
+          <div class="check-row" id="extras">
+            <label><input type="checkbox" name="parking_two_wheeler" /> Two-wheeler parking</label>
+            <label><input type="checkbox" name="parking_four_wheeler" /> Four-wheeler parking</label>
+            <label data-extra="meals" class="hidden"><input type="checkbox" name="meals_included" /> Meals included</label>
+            <label data-extra="power" class="hidden"><input type="checkbox" name="power_backup" /> Power backup</label>
+            <label data-extra="washroom" class="hidden"><input type="checkbox" name="washroom" /> Washroom</label>
+          </div>
+        </div>
+
+        <label>Amenities / services (comma separated)
+          <input name="amenities" id="amenities" placeholder="wifi, ac, geyser, cctv" />
+        </label>
+
+        <div>
+          <div class="form-section-title">Location</div>
+          <p class="muted" style="margin:0 0 0.6rem">No map needed — use your current location.</p>
+          <div class="loc-box">
+            <button type="button" class="btn btn-primary" id="btn-current-loc">Use current location</button>
+            <div class="loc-status" id="loc-status">Location not set yet.</div>
+            <div class="loc-coords" id="loc-coords"></div>
+          </div>
+          <input type="hidden" name="latitude" id="lat" required />
+          <input type="hidden" name="longitude" id="lng" required />
+        </div>
+
+        <div>
+          <div class="muted" style="margin-bottom:0.5rem;font-weight:600">Photos & videos</div>
+          <div class="dropzone" id="dropzone">Drop files here or click to choose<br><span class="muted">jpg/png/webp · mp4/webm</span>
+            <input type="file" id="files" multiple accept="image/*,video/*" hidden />
+          </div>
+          <div class="media-preview" id="preview"></div>
+        </div>
+
+        <button class="btn btn-primary" type="submit">Save property</button>
+        <div id="form-msg"></div>
+      </form>
+    </div>
+
+    <div id="owner-list" class="grid"><div class="empty">Loading…</div></div>
+
+    <section style="margin-top:2rem">
+      <div class="section-head"><h2>Booking requests</h2><p>Approve or reject seeker requests on your listings.</p></div>
+      <div id="owner-bookings" class="stack"></div>
+    </section>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/owner.js"></script>
+</body>
+</html>

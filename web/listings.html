@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Listings - RoomInHome</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="stylesheet" href="/css/listings.css" />
+</head>
+<body class="listings-page">
+  <header class="site-nav">
+    <div class="container inner">
+      <a class="brand" href="/">Room<span>InHome</span></a>
+      <nav class="nav-links" id="nav-links"></nav>
+    </div>
+  </header>
+
+  <main class="container listings-wrap">
+    <div class="listings-head">
+      <div>
+        <h1 id="page-title">Room</h1>
+        <p id="page-desc">Search easily — filter by place, rent or nearby.</p>
+      </div>
+      <div class="mode-switch" id="mode-switch">
+        <button type="button" class="is-active" data-view="all">All</button>
+        <button type="button" data-view="nearby">Near me</button>
+      </div>
+    </div>
+
+    <form class="search-bar" id="filters">
+      <div class="search-row">
+        <label>City / locality
+          <input name="place" id="place" placeholder="e.g. Pune, Baner, Kothrud" autocomplete="off" />
+        </label>
+        <label id="for-wrap">For
+          <select name="preferred_tenant">
+            <option value="">Anyone</option>
+            <option value="family">Family</option>
+            <option value="bachelor">Bachelor</option>
+            <option value="couple">Couple</option>
+            <option value="student">Student</option>
+            <option value="company">Company</option>
+          </select>
+        </label>
+        <label id="sharing-wrap">Sharing
+          <select name="sharing_type">
+            <option value="">Any</option>
+            <option value="private">Private</option>
+            <option value="1_sharing">1 sharing</option>
+            <option value="2_sharing">2 sharing</option>
+            <option value="3_sharing">3 sharing</option>
+            <option value="4_sharing">4 sharing</option>
+          </select>
+        </label>
+        <label>Budget (max ₹)
+          <input name="max_rent" type="number" min="0" placeholder="e.g. 15000" />
+        </label>
+        <div class="search-actions">
+          <button class="btn btn-primary" type="submit">Search</button>
+          <button class="btn btn-ghost" type="button" id="btn-clear">Clear</button>
+        </div>
+      </div>
+
+      <div class="near-hint" id="near-hint">
+        <span id="loc-status">Using your location to show nearby listings.</span>
+        <label style="display:flex;align-items:center;gap:0.4rem;margin:0;font-weight:600;color:inherit">
+          Within
+          <select id="radius">
+            <option value="3">3 km</option>
+            <option value="5">5 km</option>
+            <option value="10" selected>10 km</option>
+            <option value="20">20 km</option>
+            <option value="50">50 km</option>
+          </select>
+        </label>
+      </div>
+    </form>
+
+    <div class="results-meta">
+      <strong id="result-count">Searching…</strong>
+      <span id="result-hint"></span>
+    </div>
+    <div class="listing-grid" id="results">
+      <div class="empty-state">Loading…</div>
+    </div>
+  </main>
+
+  <footer class="footer"><div class="container">RoomInHome</div></footer>
+
+  <script src="/js/api.js"></script>
+  <script>
+    const type = (qs("type") || "room").toLowerCase();
+    const titles = {
+      room: ["Rooms", "Find private or sharing rooms"],
+      home: ["Homes", "Flats and houses for rent"],
+      pg: ["PG / Co-living", "1 / 2 / 3 sharing options"],
+      shop: ["Shops", "Retail and commercial spaces"],
+    };
+    const info = titles[type] || ["Listings", "Available properties"];
+    document.getElementById("page-title").textContent = info[0];
+    document.getElementById("page-desc").textContent = info[1];
+    document.title = info[0] + " - RoomInHome";
+    renderNav(type);
+
+    if (type !== "room" && type !== "pg") {
+      document.getElementById("sharing-wrap").style.display = "none";
+    }
+    if (type === "shop") {
+      // keep For filter for company
+    }
+
+    let view = qs("view") === "nearby" ? "nearby" : "all";
+    let center = { lat: 18.5204, lng: 73.8567 };
+    const form = document.getElementById("filters");
+    const nearHint = document.getElementById("near-hint");
+    const modeSwitch = document.getElementById("mode-switch");
+
+    function cardHTML(p, i) {
+      const tags = [];
+      if (p.sharing_type) tags.push(p.sharing_type.replaceAll("_", " "));
+      if (p.bhk) tags.push(p.bhk + " BHK");
+      if (p.furnishing) tags.push(p.furnishing.replaceAll("_", " "));
+      if (p.parking_two_wheeler) tags.push("2W parking");
+      if (p.parking_four_wheeler) tags.push("4W parking");
+      if (p.shop_category) tags.push(p.shop_category);
+      const tagHtml = tags.slice(0, 3).map((t) => `<span class="tag">${t}</span>`).join("");
+      const dist = p.distance_km != null ? `<span class="dist">${p.distance_km} km</span>` : "";
+      return `
+        <a class="listing-card" href="/property.html?id=${p.id}" style="animation-delay:${(i % 9) * 0.04}s">
+          <div class="thumb">
+            <img src="${coverUrl(p)}" alt="" loading="lazy" />
+            <span class="badge">${typeLabel(p.type)}</span>
+            ${dist}
+          </div>
+          <div class="body">
+            <h3>${p.title}</h3>
+            <div class="where">${locationLine(p)}</div>
+            <div class="tags">${tagHtml}</div>
+            <div class="price-row">
+              <div class="price">${formatRent(p.rent)} <small>/ mo</small></div>
+              <span class="view">View →</span>
+            </div>
+          </div>
+        </a>`;
+    }
+
+    function setView(next) {
+      view = next;
+      modeSwitch.querySelectorAll("button").forEach((b) => {
+        b.classList.toggle("is-active", b.dataset.view === view);
+      });
+      nearHint.classList.toggle("is-on", view === "nearby");
+      if (view === "nearby") locateAndLoad();
+      else loadAll();
+    }
+
+    modeSwitch.addEventListener("click", (e) => {
+      const btn = e.target.closest("button[data-view]");
+      if (btn) setView(btn.dataset.view);
+    });
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (view === "nearby") loadNearby();
+      else loadAll();
+    });
+
+    document.getElementById("btn-clear").addEventListener("click", () => {
+      form.reset();
+      document.getElementById("radius").value = "10";
+      if (view === "nearby") loadNearby();
+      else loadAll();
+    });
+
+    document.getElementById("radius").addEventListener("change", () => {
+      if (view === "nearby") loadNearby();
+    });
+
+    function placeParts() {
+      const raw = String(form.place.value || "").trim();
+      if (!raw) return { city: "", locality: "" };
+      // "Baner, Pune" or single word
+      const parts = raw.split(",").map((s) => s.trim()).filter(Boolean);
+      if (parts.length >= 2) return { locality: parts[0], city: parts[parts.length - 1] };
+      return { city: "", locality: parts[0] }; // match either via client filter / API locality
+    }
+
+    async function loadAll() {
+      const results = document.getElementById("results");
+      const count = document.getElementById("result-count");
+      const hint = document.getElementById("result-hint");
+      results.innerHTML = `<div class="empty-state">Loading listings…</div>`;
+
+      const fd = new FormData(form);
+      const { city, locality } = placeParts();
+      const q = new URLSearchParams();
+      q.set("status", "available");
+      q.set("type", type);
+      if (city) q.set("city", city);
+      if (locality) q.set("locality", locality);
+      const tenant = fd.get("preferred_tenant");
+      const sharing = fd.get("sharing_type");
+      const maxRent = fd.get("max_rent");
+      if (tenant) q.set("preferred_tenant", tenant);
+      if (sharing) q.set("sharing_type", sharing);
+      if (maxRent) q.set("max_rent", maxRent);
+
+      try {
+        let list = await api(`/api/properties?${q}`);
+        // If single place word, also match city when locality filter returned few
+        if (!city && locality) {
+          const all = await api(`/api/properties?status=available&type=${type}`);
+          const key = locality.toLowerCase();
+          list = all.filter(
+            (p) =>
+              String(p.locality || "").toLowerCase().includes(key) ||
+              String(p.city || "").toLowerCase().includes(key)
+          );
+          if (tenant) list = list.filter((p) => (p.preferred_tenants || []).includes(tenant));
+          if (sharing) list = list.filter((p) => p.sharing_type === sharing);
+          if (maxRent) list = list.filter((p) => p.rent <= Number(maxRent));
+        }
+        count.textContent = `${list.length} result${list.length === 1 ? "" : "s"}`;
+        hint.textContent = view === "all" ? ("All " + type + " listings") : "";
+        if (!list.length) {
+          results.innerHTML = `<div class="empty-state">No listings found. Try clearing filters.</div>`;
+          return;
+        }
+        results.innerHTML = list.map(cardHTML).join("");
+      } catch (e) {
+        results.innerHTML = `<div class="empty-state">${e.message}</div>`;
+        count.textContent = "Could not load";
+      }
+    }
+
+    function locateAndLoad() {
+      const status = document.getElementById("loc-status");
+      if (!navigator.geolocation) {
+        status.textContent = "Location not available — showing near Pune.";
+        loadNearby();
+        return;
+      }
+      status.textContent = "Detecting your location…";
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          center = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+          status.textContent = "Showing places near you.";
+          loadNearby();
+        },
+        () => {
+          status.textContent = "Location blocked — showing near Pune. Allow location for better results.";
+          loadNearby();
+        },
+        { enableHighAccuracy: true, timeout: 8000 }
+      );
+    }
+
+    async function loadNearby() {
+      const results = document.getElementById("results");
+      const count = document.getElementById("result-count");
+      const hint = document.getElementById("result-hint");
+      const radius = document.getElementById("radius").value || 10;
+      results.innerHTML = `<div class="empty-state">Finding nearby…</div>`;
+
+      try {
+        const data = await api(
+          `/api/map/nearby?lat=${center.lat}&lng=${center.lng}&radius_km=${radius}&type=${encodeURIComponent(type)}`
+        );
+        let list = data.properties || [];
+        const fd = new FormData(form);
+        const { city, locality } = placeParts();
+        const tenant = String(fd.get("preferred_tenant") || "");
+        const sharing = String(fd.get("sharing_type") || "");
+        const maxRent = Number(fd.get("max_rent") || 0);
+        const placeKey = (locality || city).toLowerCase();
+        list = list.filter((p) => {
+          if (placeKey) {
+            const hay = `${p.locality || ""} ${p.city || ""}`.toLowerCase();
+            if (!hay.includes(placeKey)) return false;
+          }
+          if (tenant && !(p.preferred_tenants || []).includes(tenant)) return false;
+          if (sharing && p.sharing_type !== sharing) return false;
+          if (maxRent && p.rent > maxRent) return false;
+          return true;
+        });
+
+        count.textContent = `${list.length} nearby`;
+        hint.textContent = `within ${radius} km`;
+        if (!list.length) {
+          results.innerHTML = `<div class="empty-state">Nothing nearby. Increase the distance or switch to All.</div>`;
+          return;
+        }
+        results.innerHTML = list.map(cardHTML).join("");
+      } catch (e) {
+        results.innerHTML = `<div class="empty-state">${e.message}</div>`;
+        count.textContent = "Could not load";
+      }
+    }
+
+    setView(view);
+  </script>
+</body>
+</html>

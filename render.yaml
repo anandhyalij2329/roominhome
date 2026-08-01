@@ -1,0 +1,26 @@
+# Render Blueprint — RoomInHome
+# https://dashboard.render.com → New → Blueprint
+
+services:
+  - type: web
+    name: roominhome
+    runtime: go
+    plan: free
+    buildCommand: go build -o room-rental ./cmd/server
+    startCommand: ./room-rental
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        value: "8080"
+      - key: JWT_SECRET
+        generateValue: true
+      - key: PUBLIC_BASE_URL
+        sync: false
+      - key: DB_PATH
+        value: /tmp/room_rental.db
+      - key: UPLOAD_DIR
+        value: /tmp/uploads
+      - key: MAX_PHOTO_MB
+        value: "5"
+      - key: MAX_VIDEO_MB
+        value: "50"

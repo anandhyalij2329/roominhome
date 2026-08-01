@@ -1,0 +1,8 @@
+*.db
+*.exe
+.env
+uploads/
+
+tmp-rooms.json
+room.json
+

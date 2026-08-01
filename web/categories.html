@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Collections — RoomInHome</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="stylesheet" href="/css/collection.css" />
+</head>
+<body class="collection-page">
+  <header class="site-nav">
+    <div class="container inner">
+      <a class="brand" href="/">Room<span>InHome</span></a>
+      <nav class="nav-links" id="nav-links"></nav>
+    </div>
+  </header>
+
+  <main class="container" style="padding-bottom:3rem">
+    <div class="page-hero">
+      <h1>Property collections</h1>
+      <p>Browse by category — room, home, PG or shop. Each collection has its own filters and listings.</p>
+    </div>
+
+    <div class="chip-nav" style="margin-top:0.5rem">
+      <a class="is-active" href="/categories.html">All collections</a>
+      <a href="/collection.html?type=room">Room</a>
+      <a href="/collection.html?type=home">Home</a>
+      <a href="/collection.html?type=pg">PG</a>
+      <a href="/collection.html?type=shop">Shop</a>
+    </div>
+
+    <div class="collection-overview" id="collections">
+      <!-- filled by js -->
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container" style="padding:2rem 0">RoomInHome · Collections</div>
+  </footer>
+
+  <script src="/js/api.js"></script>
+  <script>
+    renderNav("categories");
+
+    const CATS = [
+      {
+        type: "room",
+        title: "Rooms",
+        desc: "Private rooms and shared stays — bachelor, student or family friendly.",
+        img: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=900&q=75",
+      },
+      {
+        type: "home",
+        title: "Homes",
+        desc: "1 / 2 / 3 BHK flats and houses for families and long stays.",
+        img: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=900&q=75",
+      },
+      {
+        type: "pg",
+        title: "PG / Co-living",
+        desc: "1 sharing, 2 sharing, 3 sharing with meals and parking options.",
+        img: "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=900&q=75",
+      },
+      {
+        type: "shop",
+        title: "Shops",
+        desc: "Retail, office, showroom and commercial spaces for rent.",
+        img: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=900&q=75",
+      },
+    ];
+
+    const root = document.getElementById("collections");
+    root.innerHTML = CATS.map(
+      (c) => `
+      <a class="collection-card" href="/collection.html?type=${c.type}">
+        <div class="collection-card-media"><img src="${c.img}" alt="" loading="lazy" /></div>
+        <div class="collection-card-body">
+          <div class="tag">Collection</div>
+          <h2>${c.title}</h2>
+          <p>${c.desc}</p>
+          <span class="go">View collection →</span>
+          <span class="muted" data-count="${c.type}">Counting…</span>
+        </div>
+      </a>`
+    ).join("");
+
+    Promise.all(
+      CATS.map((c) =>
+        api(`/api/properties?type=${c.type}&status=available`)
+          .then((list) => ({ type: c.type, n: (list || []).length }))
+          .catch(() => ({ type: c.type, n: 0 }))
+      )
+    ).then((counts) => {
+      counts.forEach(({ type, n }) => {
+        const el = document.querySelector(`[data-count="${type}"]`);
+        if (el) el.textContent = `${n} listing${n === 1 ? "" : "s"} available`;
+      });
+    });
+  </script>
+</body>
+</html>

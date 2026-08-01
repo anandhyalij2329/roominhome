@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Browse — RoomInHome</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <header class="site-nav">
+    <div class="container inner">
+      <a class="brand" href="/">Room<span>InHome</span></a>
+      <nav class="nav-links" id="nav-links"></nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="page-hero">
+      <h1>Browse rentals</h1>
+      <p>Filter by type, city, tenants, sharing, parking — or search near you on the map.</p>
+    </div>
+
+    <form class="panel filters" id="filters">
+      <label>Type
+        <select name="type">
+          <option value="">All</option>
+          <option value="room">Room</option>
+          <option value="home">Home</option>
+          <option value="pg">PG</option>
+          <option value="shop">Shop</option>
+        </select>
+      </label>
+      <label>City <input name="city" placeholder="Pune" /></label>
+      <label>Locality <input name="locality" placeholder="Baner" /></label>
+      <label>For
+        <select name="preferred_tenant">
+          <option value="">Anyone</option>
+          <option value="family">Family</option>
+          <option value="bachelor">Bachelor</option>
+          <option value="couple">Couple</option>
+          <option value="student">Student</option>
+          <option value="company">Company</option>
+        </select>
+      </label>
+      <label>Sharing
+        <select name="sharing_type">
+          <option value="">Any</option>
+          <option value="private">Private</option>
+          <option value="1_sharing">1 sharing</option>
+          <option value="2_sharing">2 sharing</option>
+          <option value="3_sharing">3 sharing</option>
+          <option value="4_sharing">4 sharing</option>
+        </select>
+      </label>
+      <label>Min rent <input name="min_rent" type="number" min="0" /></label>
+      <label>Max rent <input name="max_rent" type="number" min="0" /></label>
+      <label>Two-wheeler
+        <select name="parking_two_wheeler">
+          <option value="">Any</option>
+          <option value="true">Yes</option>
+        </select>
+      </label>
+      <label>Four-wheeler
+        <select name="parking_four_wheeler">
+          <option value="">Any</option>
+          <option value="true">Yes</option>
+        </select>
+      </label>
+      <label>&nbsp;<button class="btn btn-primary" type="submit" style="width:100%">Apply</button></label>
+    </form>
+
+    <div class="panel" style="margin-bottom:1.25rem">
+      <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:end;justify-content:space-between;margin-bottom:0.75rem">
+        <div>
+          <strong>Nearby on map</strong>
+          <p class="muted" style="margin:0.2rem 0 0">Uses your location or a custom pin.</p>
+        </div>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+          <button type="button" class="btn btn-ghost" id="use-my-location">Use my location</button>
+          <label style="min-width:120px">Radius (km)
+            <input id="radius" type="number" value="5" min="1" max="50" />
+          </label>
+        </div>
+      </div>
+      <div id="browse-map" class="map-box"></div>
+    </div>
+
+    <div class="grid" id="results"><div class="empty">Loading…</div></div>
+  </main>
+
+  <footer class="footer"><div class="container">RoomInHome</div></footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/browse.js"></script>
+</body>
+</html>

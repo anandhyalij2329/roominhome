@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Log in — RoomInHome</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <header class="site-nav">
+    <div class="container inner">
+      <a class="brand" href="/">Room<span>InHome</span></a>
+      <nav class="nav-links" id="nav-links"></nav>
+    </div>
+  </header>
+  <main class="auth-wrap">
+    <div class="panel auth-panel stack">
+      <h1>Welcome back</h1>
+      <p class="muted">Log in to list or book a place on RoomInHome.</p>
+      <form id="login-form" class="stack">
+        <label>Email <input type="email" name="email" required /></label>
+        <label>Password <input type="password" name="password" required minlength="6" /></label>
+        <button class="btn btn-primary" type="submit">Log in</button>
+        <div id="msg"></div>
+      </form>
+      <p class="muted">New here? <a href="/register.html">Create an account</a></p>
+    </div>
+  </main>
+  <script src="/js/api.js"></script>
+  <script>
+    renderNav();
+    document.getElementById("login-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const msg = document.getElementById("msg");
+      try {
+        const data = await api("/api/auth/login", {
+          method: "POST",
+          body: JSON.stringify({ email: fd.get("email"), password: fd.get("password") }),
+        });
+        setSession(data.token, data.user);
+        location.href = data.user.role === "owner" ? "/owner.html" : "/browse.html";
+      } catch (err) {
+        msg.className = "alert";
+        msg.textContent = err.message;
+      }
+    });
+  </script>
+</body>
+</html>

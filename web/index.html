@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RoomInHome — Find your perfect place</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="stylesheet" href="/css/home.css" />
+</head>
+<body class="home">
+  <header class="site-nav">
+    <div class="container inner">
+      <a class="brand" href="/">Room<span>InHome</span></a>
+      <nav class="nav-links" id="nav-links"></nav>
+    </div>
+  </header>
+
+  <!-- Hero: brand + one headline + one line + CTAs + full-bleed image -->
+  <section class="hero">
+    <div class="hero-media" aria-hidden="true">
+      <img
+        src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=2000&q=80"
+        alt=""
+      />
+    </div>
+    <div class="hero-scrim"></div>
+    <div class="hero-content">
+      <p class="hero-brand">Room<em>InHome</em></p>
+      <h1>Find your perfect place today.</h1>
+      <p>Rooms, homes, PGs and shops — with map pin, photos and video from real owners.</p>
+      <div class="hero-actions">
+        <a class="btn btn-sand" href="/browse.html">Browse listings</a>
+        <a class="btn btn-ghost" href="/register.html?role=owner">List property</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick suit / search -->
+  <section class="suit-section">
+    <div class="container">
+      <div class="suit-panel">
+        <h2>Choose what suits your search</h2>
+        <form class="suit-grid" id="suit-form" action="/browse.html" method="get">
+          <a class="suit-opt is-active" href="/listings.html?type=room" data-type="room">
+            <span class="ico">R</span>
+            <strong>Room</strong>
+            <span>Private / sharing</span>
+          </a>
+          <a class="suit-opt" href="/listings.html?type=home" data-type="home">
+            <span class="ico">H</span>
+            <strong>Home</strong>
+            <span>Flat & house</span>
+          </a>
+          <a class="suit-opt" href="/listings.html?type=pg" data-type="pg">
+            <span class="ico">PG</span>
+            <strong>PG</strong>
+            <span>1 / 2 / 3 sharing</span>
+          </a>
+          <a class="suit-opt" href="/listings.html?type=shop" data-type="shop">
+            <span class="ico">S</span>
+            <strong>Shop</strong>
+            <span>Retail & office</span>
+          </a>
+          <button class="btn btn-primary" type="submit" id="suit-search">Search</button>
+          <input type="hidden" name="type" id="suit-type" value="room" />
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Categories -->
+  <section class="section tight">
+    <div class="container">
+      <div class="section-head">
+        <h2>Browse by your choice</h2>
+        <p>Pick a property type and explore listings with location, rent and amenities.</p>
+      </div>
+      <div class="cat-row">
+        <a class="cat-tile" href="/listings.html?type=room">
+          <span class="label">Room</span>
+          <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=700&q=70" alt="" loading="lazy" />
+          <span class="caption">Private & shared rooms</span>
+        </a>
+        <a class="cat-tile" href="/listings.html?type=home">
+          <span class="label">Home</span>
+          <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=700&q=70" alt="" loading="lazy" />
+          <span class="caption">Flats & family homes</span>
+        </a>
+        <a class="cat-tile" href="/listings.html?type=pg">
+          <span class="label">PG</span>
+          <img src="https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=700&q=70" alt="" loading="lazy" />
+          <span class="caption">1 / 2 / 3 sharing</span>
+        </a>
+        <a class="cat-tile" href="/listings.html?type=shop">
+          <span class="label">Shop</span>
+          <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=700&q=70" alt="" loading="lazy" />
+          <span class="caption">Shops & commercial</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- PG focus -->
+  <section class="section tight">
+    <div class="container">
+      <div class="pg-band">
+        <div class="pg-band-copy">
+          <h2>Looking for PG / co-living?</h2>
+          <ul>
+            <li>1 sharing, 2 sharing, 3 sharing &amp; private options</li>
+            <li>Filter for bachelor, student, meals &amp; parking</li>
+            <li>Map location, photos and video from owners</li>
+          </ul>
+          <a class="btn btn-sand" href="/listings.html?type=pg">Explore PGs</a>
+        </div>
+        <div class="pg-band-media">
+          <img src="https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=1000&q=75" alt="" loading="lazy" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured from API -->
+  <section class="section tight">
+    <div class="container">
+      <div class="section-head">
+        <h2>Featured properties</h2>
+        <p>Latest available listings — rent, locality and map-ready pins.</p>
+      </div>
+      <div class="grid" id="home-listings">
+        <div class="empty">Loading listings…</div>
+      </div>
+      <p style="margin-top:1.25rem">
+        <a class="btn btn-ghost" href="/browse.html">View all listings</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section class="stats-bar">
+    <div class="container stats-row">
+      <div class="stat"><strong id="stat-props">—</strong><span>Properties listed</span></div>
+      <div class="stat"><strong>4</strong><span>Types · room home PG shop</span></div>
+      <div class="stat"><strong>Map</strong><span>Pin exact location</span></div>
+      <div class="stat"><strong>Media</strong><span>Photos &amp; video upload</span></div>
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <h2>Our services</h2>
+        <p>Everything you need to list or find a rental in one place.</p>
+      </div>
+      <div class="service-row">
+        <a class="service" href="/register.html?role=owner">
+          <div class="mark">01</div>
+          <h3>List property</h3>
+          <p>Register room, home, PG or shop with full details.</p>
+          <span class="more">Get started →</span>
+        </a>
+        <a class="service" href="/browse.html">
+          <div class="mark">02</div>
+          <h3>Find &amp; rent</h3>
+          <p>Filter by city, tenants, sharing and parking.</p>
+          <span class="more">Browse →</span>
+        </a>
+        <a class="service" href="/browse.html">
+          <div class="mark">03</div>
+          <h3>Map search</h3>
+          <p>See nearby listings around your pin on the map.</p>
+          <span class="more">Open map →</span>
+        </a>
+        <a class="service" href="/register.html?role=owner">
+          <div class="mark">04</div>
+          <h3>Photos &amp; video</h3>
+          <p>Upload media so seekers see the place clearly.</p>
+          <span class="more">Upload →</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <a class="brand" href="/">Room<span>InHome</span></a>
+          <p>Room · Home · PG · Shop rentals with map, photos and bookings.</p>
+        </div>
+        <div>
+          <h4>Explore</h4>
+          <a href="/categories.html">All collections</a>
+          <a href="/collection.html?type=room">Rooms</a>
+          <a href="/collection.html?type=home">Homes</a>
+          <a href="/collection.html?type=pg">PG</a>
+          <a href="/collection.html?type=shop">Shops</a>
+        </div>
+        <div>
+          <h4>Account</h4>
+          <a href="/login.html">Log in</a>
+          <a href="/register.html">Join</a>
+          <a href="/register.html?role=owner">List property</a>
+        </div>
+        <div>
+          <h4>Help</h4>
+          <a href="/browse.html">Browse</a>
+          <a href="/owner.html">Owner dashboard</a>
+        </div>
+      </div>
+      <div class="footer-copy">&copy; RoomInHome &middot; roominhome.com</div>
+    </div>
+  </footer>
+
+  <script src="/js/api.js"></script>
+  <script>
+    renderNav();
+
+    const suitForm = document.getElementById("suit-form");
+    const suitType = document.getElementById("suit-type");
+    suitForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      location.href = "/listings.html?type=" + encodeURIComponent(suitType.value);
+    });
+    document.querySelectorAll(".suit-opt").forEach((el) => {
+      el.addEventListener("click", (e) => {
+        e.preventDefault();
+        document.querySelectorAll(".suit-opt").forEach((x) => x.classList.remove("is-active"));
+        el.classList.add("is-active");
+        suitType.value = el.dataset.type;
+      });
+      el.href = "/listings.html?type=" + el.dataset.type;
+    });
+
+    api("/api/properties?status=available")
+      .then((list) => {
+        const el = document.getElementById("home-listings");
+        const items = list || [];
+        document.getElementById("stat-props").textContent = items.length + "+";
+        const show = items.slice(0, 8);
+        if (!show.length) {
+          el.innerHTML = `<div class="empty">No listings yet. <a href="/register.html?role=owner">List the first property</a>.</div>`;
+          return;
+        }
+        el.innerHTML = show
+          .map(
+            (p, i) => `
+          <a class="listing" href="/property.html?id=${p.id}" style="animation-delay:${i * 0.05}s">
+            <div class="listing-media"><img src="${coverUrl(p)}" alt="" loading="lazy" /></div>
+            <div class="listing-body">
+              <div class="listing-type">${typeLabel(p.type)}</div>
+              <h3>${p.title}</h3>
+              <div class="meta">${locationLine(p)}</div>
+              <div class="rent">${formatRent(p.rent)} / month</div>
+            </div>
+          </a>`
+          )
+          .join("");
+      })
+      .catch(() => {
+        document.getElementById("home-listings").innerHTML =
+          `<div class="empty">Could not load listings. Start the server and refresh.</div>`;
+      });
+  </script>
+</body>
+</html>

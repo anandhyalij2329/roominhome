@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bookings — RoomInHome</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <header class="site-nav">
+    <div class="container inner">
+      <a class="brand" href="/">Room<span>InHome</span></a>
+      <nav class="nav-links" id="nav-links"></nav>
+    </div>
+  </header>
+  <main class="container" style="padding-bottom:3rem">
+    <div class="page-hero">
+      <h1>My bookings</h1>
+      <p>Track requests you have sent to property owners.</p>
+    </div>
+    <div id="list" class="stack"><div class="empty">Loading…</div></div>
+  </main>
+  <script src="/js/api.js"></script>
+  <script>
+    renderNav("bookings");
+    if (!getToken() || getUser()?.role !== "seeker") location.href = "/login.html";
+    (async () => {
+      const el = document.getElementById("list");
+      try {
+        const list = await api("/api/bookings");
+        if (!list.length) {
+          el.innerHTML = `<div class="empty">No bookings yet. <a href="/browse.html">Browse listings</a>.</div>`;
+          return;
+        }
+        el.innerHTML = list.map((b) => `
+          <div class="panel" style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:0.75rem;align-items:center">
+            <div>
+              <strong><a href="/property.html?id=${b.property_id}">${b.property_title || "Property"}</a></strong>
+              <div class="muted">${String(b.start_date).slice(0,10)} → ${String(b.end_date).slice(0,10)} · ${b.status}</div>
+            </div>
+            ${b.status === "pending" ? `<button class="btn btn-ghost" data-id="${b.id}">Cancel</button>` : ""}
+          </div>
+        `).join("");
+        el.querySelectorAll("button[data-id]").forEach((btn) => {
+          btn.addEventListener("click", async () => {
+            await api(`/api/bookings/${btn.dataset.id}/status`, {
+              method: "PATCH",
+              body: JSON.stringify({ status: "cancelled" }),
+            });
+            location.reload();
+          });
+        });
+      } catch (e) {
+        el.innerHTML = `<div class="empty">${e.message}</div>`;
+      }
+    })();
+  </script>
+</body>
+</html>
