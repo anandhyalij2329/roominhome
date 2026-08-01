@@ -1,4 +1,4 @@
-/* Listings page — clean search + results */
+/* Listings page — Room / Home / PG / Shop */
 body.listings-page {
   background: var(--paper);
 }
@@ -9,22 +9,27 @@ body.listings-page .site-nav {
 }
 
 .listings-wrap {
-  padding: 1.5rem 0 3.5rem;
+  padding: 1.35rem 0 3.5rem;
 }
 
 .listings-head {
   display: flex;
   flex-wrap: wrap;
-  align-items: end;
+  align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 1.25rem;
+  gap: 0.85rem 1rem;
+  margin-bottom: 1.15rem;
+}
+
+.listings-head > div:first-child {
+  min-width: 0;
+  flex: 1 1 auto;
 }
 
 .listings-head h1 {
   font-family: var(--font-display);
-  font-size: clamp(1.8rem, 4vw, 2.4rem);
-  margin: 0 0 0.25rem;
+  font-size: clamp(1.75rem, 4vw, 2.35rem);
+  margin: 0 0 0.2rem;
   letter-spacing: -0.02em;
   color: var(--navy);
 }
@@ -32,25 +37,31 @@ body.listings-page .site-nav {
 .listings-head p {
   margin: 0;
   color: var(--ink-soft);
+  font-size: 0.95rem;
 }
 
 .mode-switch {
   display: inline-flex;
-  padding: 0.25rem;
+  flex: 0 0 auto;
+  flex-wrap: nowrap;
+  padding: 0.22rem;
   background: #fff;
   border: 1px solid rgba(11, 28, 51, 0.1);
   border-radius: 12px;
-  gap: 0.2rem;
+  gap: 0.15rem;
+  white-space: nowrap;
 }
 
 .mode-switch button {
   border: 0;
   background: transparent;
-  padding: 0.55rem 1rem;
+  padding: 0.5rem 0.95rem;
   border-radius: 9px;
   font-weight: 650;
   cursor: pointer;
   color: var(--ink-soft);
+  white-space: nowrap;
+  line-height: 1.2;
 }
 
 .mode-switch button.is-active {
@@ -58,67 +69,137 @@ body.listings-page .site-nav {
   color: #fff;
 }
 
+@media (max-width: 640px) {
+  .listings-head {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .mode-switch {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+  }
+
+  .mode-switch button {
+    width: 100%;
+    text-align: center;
+    padding: 0.55rem 0.5rem;
+  }
+}
+
 .search-bar {
   background: #fff;
   border: 1px solid rgba(11, 28, 51, 0.1);
   border-radius: 16px;
   padding: 1rem;
-  margin-bottom: 1.35rem;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 8px 24px rgba(11, 28, 51, 0.04);
 }
 
 .search-row {
   display: grid;
-  grid-template-columns: 1.4fr 1fr 1fr 1fr auto;
-  gap: 0.65rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+  gap: 0.75rem;
   align-items: end;
 }
 
+/* Home: City | For | Budget | actions */
+body[data-type="home"] .search-row {
+  grid-template-columns: 1.3fr 1fr 1fr auto;
+}
+
+/* Shop: City | Budget | actions */
+body[data-type="shop"] .search-row {
+  grid-template-columns: 1.4fr 1fr auto;
+}
+
 @media (max-width: 900px) {
-  .search-row {
+  .search-row,
+  body[data-type="home"] .search-row,
+  body[data-type="shop"] .search-row,
+  body[data-type="room"] .search-row,
+  body[data-type="pg"] .search-row {
     grid-template-columns: 1fr 1fr;
   }
+
   .search-row .search-actions {
     grid-column: 1 / -1;
   }
 }
 
 .search-bar label {
-  gap: 0.3rem;
+  display: grid;
+  gap: 0.35rem;
   font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  margin: 0;
 }
 
 .search-bar input,
 .search-bar select {
+  width: 100%;
   border-radius: 10px;
   border: 1px solid rgba(11, 28, 51, 0.12);
-  background: var(--sky);
-  padding: 0.7rem 0.8rem;
+  background: #eef2f7;
+  padding: 0.72rem 0.85rem;
+  color: var(--navy);
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.search-bar select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%235a6b7d' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.85rem center;
+  padding-right: 2rem;
+}
+
+.search-bar input::placeholder {
+  color: #8a97a8;
 }
 
 .search-bar input:focus,
 .search-bar select:focus {
-  outline: 2px solid rgba(31, 107, 87, 0.25);
+  outline: none;
+  border-color: rgba(11, 28, 51, 0.35);
   background: #fff;
+  box-shadow: 0 0 0 3px rgba(11, 28, 51, 0.08);
 }
 
 .search-actions {
   display: flex;
-  gap: 0.45rem;
-  flex-wrap: wrap;
+  gap: 0.5rem;
+  flex-wrap: nowrap;
+  align-items: stretch;
 }
 
 .search-actions .btn {
   white-space: nowrap;
-  min-height: 44px;
+  min-height: 46px;
+  flex: 1 1 auto;
+  padding: 0.7rem 1.1rem;
+}
+
+.search-actions .btn-primary {
+  background: var(--navy);
+  color: #fff;
+}
+
+.search-actions .btn-ghost {
+  background: #fff;
+  border: 1px solid rgba(11, 28, 51, 0.14);
+  color: var(--navy);
 }
 
 .near-hint {
   display: none;
-  margin-top: 0.75rem;
-  padding: 0.7rem 0.85rem;
+  margin-top: 0.85rem;
+  padding: 0.75rem 0.9rem;
   border-radius: 10px;
-  background: rgba(31, 107, 87, 0.08);
-  color: var(--jade-deep);
+  background: rgba(11, 28, 51, 0.06);
+  color: var(--navy);
   font-size: 0.9rem;
   align-items: center;
   justify-content: space-between;
@@ -137,6 +218,7 @@ body.listings-page .site-nav {
   border: 1px solid rgba(11, 28, 51, 0.12);
   border-radius: 8px;
   padding: 0.4rem 0.55rem;
+  color: var(--navy);
 }
 
 .results-meta {
@@ -220,7 +302,7 @@ body.listings-page .site-nav {
 
 .listing-card .thumb {
   aspect-ratio: 16 / 11;
-  background: #d5e0db;
+  background: #d7dee8;
   position: relative;
   overflow: hidden;
 }
@@ -286,8 +368,8 @@ body.listings-page .site-nav {
 
 .listing-card .tag {
   font-size: 0.75rem;
-  background: var(--sky);
-  color: var(--jade-deep);
+  background: #eef2f7;
+  color: var(--navy);
   padding: 0.2rem 0.45rem;
   border-radius: 6px;
   font-weight: 600;
@@ -316,7 +398,7 @@ body.listings-page .site-nav {
 .listing-card .view {
   font-size: 0.85rem;
   font-weight: 700;
-  color: var(--jade);
+  color: var(--navy);
 }
 
 .empty-state {

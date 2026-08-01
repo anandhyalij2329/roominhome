@@ -122,22 +122,23 @@
   <script>
     const type = (qs("type") || "room").toLowerCase();
     const titles = {
-      room: ["Rooms", "Find private or sharing rooms"],
+      room: ["Rooms", "Find rooms for rent"],
       home: ["Homes", "Flats and houses for rent"],
       pg: ["PG / Co-living", "1 / 2 / 3 sharing options"],
       shop: ["Shops", "Retail and commercial spaces"],
     };
     const info = titles[type] || ["Listings", "Available properties"];
+    document.body.dataset.type = type;
     document.getElementById("page-title").textContent = info[0];
     document.getElementById("page-desc").textContent = info[1];
     document.title = info[0] + " - RoomInHome";
     renderNav(type);
 
     if (type !== "room" && type !== "pg") {
-      document.getElementById("sharing-wrap").style.display = "none";
+      document.getElementById("sharing-wrap").hidden = true;
     }
     if (type === "shop") {
-      // keep For filter for company
+      document.getElementById("for-wrap").hidden = true;
     }
 
     let view = qs("view") === "nearby" ? "nearby" : "all";
