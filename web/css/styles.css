@@ -627,6 +627,11 @@ textarea {
   margin: 0;
 }
 
+.check-row label.hidden,
+.hidden {
+  display: none !important;
+}
+
 @media (max-width: 520px) {
   .check-row {
     grid-template-columns: 1fr;
