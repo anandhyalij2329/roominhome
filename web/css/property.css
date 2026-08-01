@@ -1,8 +1,6 @@
 /* Property detail — attractive layout */
 body.property-page {
-  background:
-    radial-gradient(900px 420px at 0% 0%, rgba(31, 107, 87, 0.1), transparent 55%),
-    linear-gradient(180deg, #f3f6f5, #e8eeea);
+  background: var(--paper);
 }
 
 .prop-wrap {
@@ -118,8 +116,8 @@ body.property-page {
   font-weight: 750;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #154a3c;
-  background: rgba(31, 107, 87, 0.12);
+  color: #0b1c33;
+  background: rgba(230, 180, 34, 0.18);
   padding: 0.3rem 0.55rem;
   border-radius: 999px;
   margin-bottom: 0.55rem;
@@ -143,7 +141,7 @@ body.property-page {
 .prop-rent strong {
   font-size: 1.75rem;
   font-weight: 750;
-  color: #14201c;
+  color: #0b1c33;
 }
 
 .prop-rent span {
@@ -164,7 +162,7 @@ body.property-page {
   margin-top: 0.7rem;
   padding: 0.4rem 0.7rem;
   border-radius: 999px;
-  background: #14201c;
+  background: #0b1c33;
   color: #f7fbf9;
   font-size: 0.82rem;
   font-weight: 650;
@@ -207,8 +205,8 @@ body.property-page {
 .owner-box {
   padding: 0.9rem;
   border-radius: 14px;
-  background: linear-gradient(145deg, rgba(31, 107, 87, 0.1), rgba(31, 107, 87, 0.04));
-  border: 1px solid rgba(31, 107, 87, 0.16);
+  background: linear-gradient(145deg, rgba(11, 28, 51, 0.1), rgba(230, 180, 34, 0.08));
+  border: 1px solid rgba(11, 28, 51, 0.14);
 }
 
 .owner-box .name {

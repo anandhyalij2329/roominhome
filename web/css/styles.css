@@ -1,17 +1,21 @@
 :root {
-  --ink: #14201c;
-  --ink-soft: #3a4a44;
-  --mist: #e8eee9;
-  --paper: #f4f7f5;
-  --jade: #1f6b57;
-  --jade-deep: #154a3c;
-  --sand: #d6c4a8;
-  --line: rgba(20, 32, 28, 0.12);
+  --navy: #0b1c33;
+  --navy-mid: #132a47;
+  --sky: #e8eef6;
+  --ink: #0b1c33;
+  --ink-soft: #5a6b7d;
+  --mist: #e8eef6;
+  --paper: #f5f7fb;
+  --jade: #1a4d7c;
+  --jade-deep: #0b1c33;
+  --sand: #e6b422;
+  --gold: #e6b422;
+  --line: rgba(11, 28, 51, 0.1);
   --danger: #9b2c2c;
   --radius: 14px;
   --font-display: "Fraunces", Georgia, serif;
   --font-body: "Figtree", sans-serif;
-  --shadow-soft: 0 18px 40px rgba(20, 32, 28, 0.08);
+  --shadow-soft: 0 18px 40px rgba(11, 28, 51, 0.08);
   --max: 1120px;
 }
 
@@ -29,10 +33,7 @@ body {
   margin: 0;
   font-family: var(--font-body);
   color: var(--ink);
-  background:
-    radial-gradient(1200px 600px at 10% -10%, rgba(31, 107, 87, 0.14), transparent 55%),
-    radial-gradient(900px 500px at 100% 0%, rgba(214, 196, 168, 0.35), transparent 50%),
-    linear-gradient(180deg, var(--paper), var(--mist));
+  background: var(--paper);
   min-height: 100vh;
   line-height: 1.5;
 }
@@ -65,9 +66,9 @@ textarea {
   position: sticky;
   top: 0;
   z-index: 40;
-  backdrop-filter: blur(12px);
-  background: rgba(244, 247, 245, 0.82);
-  border-bottom: 1px solid var(--line);
+  background: var(--navy);
+  border-bottom: 0;
+  backdrop-filter: none;
 }
 
 .site-nav .inner {
@@ -83,10 +84,11 @@ textarea {
   font-size: 1.55rem;
   font-weight: 600;
   letter-spacing: -0.02em;
+  color: #f4f7fb;
 }
 
 .brand span {
-  color: var(--jade);
+  color: var(--gold);
 }
 
 .nav-links {
@@ -111,7 +113,7 @@ textarea {
 .nav-cat {
   font-size: 0.95rem !important;
   font-weight: 650;
-  color: var(--ink) !important;
+  color: #f4f7fb !important;
   padding: 0.4rem 0.7rem;
   border-radius: 8px;
   transition: background 0.2s ease, color 0.2s ease;
@@ -120,8 +122,8 @@ textarea {
 
 .nav-cat:hover,
 .nav-cat.is-active {
-  background: rgba(31, 107, 87, 0.12);
-  color: var(--jade-deep) !important;
+  background: rgba(230, 180, 34, 0.2);
+  color: var(--gold) !important;
 }
 
 .nav-account {
@@ -134,7 +136,7 @@ textarea {
 
 .nav-account a {
   font-size: 0.92rem;
-  color: var(--ink-soft);
+  color: rgba(244, 247, 251, 0.88);
   white-space: nowrap;
 }
 
@@ -144,6 +146,26 @@ textarea {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  color: rgba(244, 247, 251, 0.75);
+}
+
+.site-nav .muted {
+  color: rgba(244, 247, 251, 0.75);
+}
+
+.site-nav .btn-ghost {
+  border-color: rgba(244, 247, 251, 0.35);
+  color: #f4f7fb;
+}
+
+.site-nav .btn-primary {
+  background: var(--gold);
+  color: var(--navy);
+}
+
+.site-nav .btn-primary:hover {
+  background: #f0c43a;
+  color: var(--navy);
 }
 
 @media (max-width: 900px) {
@@ -177,7 +199,7 @@ textarea {
     gap: 0.25rem;
     padding: 0.2rem;
     border-radius: 10px;
-    background: rgba(20, 32, 28, 0.05);
+    background: rgba(244, 247, 251, 0.08);
   }
 
   .nav-cat {
@@ -218,15 +240,15 @@ textarea {
 
 .nav-links a {
   font-size: 0.95rem;
-  color: var(--ink-soft);
+  color: rgba(244, 247, 251, 0.88);
 }
 
 .nav-links a:hover {
-  color: var(--jade-deep);
+  color: var(--gold);
 }
 
 .nav-links a[aria-current="page"] {
-  color: var(--jade-deep);
+  color: var(--gold);
   font-weight: 650;
 }
 
@@ -248,12 +270,12 @@ textarea {
 }
 
 .btn-primary {
-  background: var(--jade);
-  color: #f7fbf9;
+  background: var(--navy);
+  color: #f4f7fb;
 }
 
 .btn-primary:hover {
-  background: var(--jade-deep);
+  background: var(--navy-mid);
 }
 
 .btn-ghost {
@@ -263,8 +285,8 @@ textarea {
 }
 
 .btn-sand {
-  background: var(--sand);
-  color: var(--ink);
+  background: var(--gold);
+  color: var(--navy);
 }
 
 .btn-danger {
@@ -739,8 +761,21 @@ textarea {
 .footer {
   padding: 2.5rem 0 2rem;
   border-top: 1px solid var(--line);
-  color: var(--ink-soft);
+  background: var(--navy);
+  color: rgba(244, 247, 251, 0.75);
   font-size: 0.92rem;
+}
+
+.footer a {
+  color: rgba(244, 247, 251, 0.85);
+}
+
+.footer a:hover {
+  color: var(--gold);
+}
+
+.footer .brand {
+  color: #f4f7fb;
 }
 
 .dropzone {
@@ -755,8 +790,8 @@ textarea {
 
 .dropzone:hover,
 .dropzone.drag {
-  border-color: var(--jade);
-  background: rgba(31, 107, 87, 0.06);
+  border-color: var(--gold);
+  background: rgba(230, 180, 34, 0.08);
 }
 
 .media-preview {

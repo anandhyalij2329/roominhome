@@ -1,16 +1,11 @@
 /* Listings page — clean search + results */
 body.listings-page {
-  --navy: #0b1c33;
-  --jade: #1f6b57;
-  --jade-deep: #154a3c;
-  --sky: #eef3f1;
-  --paper: #f3f6f5;
   background: var(--paper);
 }
 
 body.listings-page .site-nav {
-  background: #fff;
-  border-bottom: 1px solid rgba(11, 28, 51, 0.08);
+  background: var(--navy);
+  border-bottom: 0;
 }
 
 .listings-wrap {
@@ -59,7 +54,7 @@ body.listings-page .site-nav {
 }
 
 .mode-switch button.is-active {
-  background: var(--jade);
+  background: var(--navy);
   color: #fff;
 }
 
@@ -215,7 +210,7 @@ body.listings-page .site-nav {
   position: absolute;
   right: 0.7rem;
   top: 0.7rem;
-  background: var(--jade);
+  background: var(--navy);
   color: #fff;
   font-size: 0.75rem;
   font-weight: 700;
