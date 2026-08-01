@@ -18,12 +18,25 @@ func SeedIfEmpty(db *sql.DB) (int, error) {
 		return 0, err
 	}
 	if count > 0 {
+		if err := ClearSeedContacts(db); err != nil {
+			return 0, err
+		}
 		if err := EnsureSeedMedia(db); err != nil {
 			return 0, err
 		}
 		return 0, nil
 	}
 	return Run(db)
+}
+
+// ClearSeedContacts removes demo contact numbers from seed users/properties.
+func ClearSeedContacts(db *sql.DB) error {
+	if _, err := db.Exec(`UPDATE properties SET contact_phone = '' WHERE id LIKE 'seed-%'`); err != nil {
+		return err
+	}
+	_, err := db.Exec(`UPDATE users SET phone = '' WHERE id LIKE 'seed-%' OR email IN (?, ?)`,
+		"owner@roominhome.test", "seeker@roominhome.test")
+	return err
 }
 
 // Run clears seed data and inserts demo users + 40 properties with media.
@@ -55,11 +68,11 @@ func Run(db *sql.DB) (int, error) {
 	}
 
 	if err := exec(db, `INSERT INTO users (id, name, email, password_hash, role, phone, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-		ownerID, "Suresh Patil", "owner@roominhome.test", ownerHash, "owner", "9876543210", now); err != nil {
+		ownerID, "Suresh Patil", "owner@roominhome.test", ownerHash, "owner", "", now); err != nil {
 		return 0, err
 	}
 	if err := exec(db, `INSERT INTO users (id, name, email, password_hash, role, phone, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-		seekerID, "Ananya Deshmukh", "seeker@roominhome.test", seekerHash, "seeker", "9123456780", now); err != nil {
+		seekerID, "Ananya Deshmukh", "seeker@roominhome.test", seekerHash, "seeker", "", now); err != nil {
 		return 0, err
 	}
 
@@ -119,7 +132,7 @@ func Run(db *sql.DB) (int, error) {
 			a.Address, a.Locality, "Pune", "Maharashtra", a.Pincode, a.Landmark, a.Lat+offset(i), a.Lng+offset(i)*0.5,
 			roomRents[i], roomRents[i]*2, from, until,
 			1, boolInt(i%3 == 0),
-			`["bachelor","student"]`, `["wifi","geyser","cctv"]`, "9876543210",
+			`["bachelor","student"]`, `["wifi","geyser","cctv"]`, "",
 			1, 1, 120+float64(i*10), "semi_furnished", roomShares[i], "any",
 			i%4, 5, 0, 0, "",
 			"", 0.0, 0, 0,
@@ -155,7 +168,7 @@ func Run(db *sql.DB) (int, error) {
 			a.Address, a.Locality, "Pune", "Maharashtra", a.Pincode, a.Landmark, a.Lat+offset(i+1), a.Lng-offset(i)*0.4,
 			homeRents[i], homeRents[i]*2, from, until,
 			1, 1,
-			`["family"]`, `["lift","security","society","wifi"]`, "9876543210",
+			`["family"]`, `["lift","security","society","wifi"]`, "",
 			bhk, bhk, 500+float64(bhk*200), pickFurnish(i), "", "any",
 			(i%6)+1, 8, bhk, 0, "",
 			"", 0.0, boolInt(i%2 == 0), 0,
@@ -191,7 +204,7 @@ func Run(db *sql.DB) (int, error) {
 			a.Address, a.Locality, "Pune", "Maharashtra", a.Pincode, a.Landmark, a.Lat-offset(i)*0.3, a.Lng+offset(i)*0.3,
 			pgRents[i], pgRents[i], from, until,
 			1, 0,
-			`["bachelor","student"]`, `["wifi","meals","cctv","housekeeping"]`, "9876543210",
+			`["bachelor","student"]`, `["wifi","meals","cctv","housekeeping"]`, "",
 			1, 1, 100+float64(i*8), "furnished", pgShares[i], pgGender[i],
 			i%3, 4, 0, 1, pickFood(i),
 			"", 0.0, 0, 0,
@@ -226,7 +239,7 @@ func Run(db *sql.DB) (int, error) {
 			a.Address, a.Locality, "Pune", "Maharashtra", a.Pincode, a.Landmark, a.Lat+offset(i)*0.2, a.Lng-offset(i)*0.2,
 			shopRents[i], shopRents[i]*3, from, until,
 			1, boolInt(i%2 == 0),
-			`["company","anyone"]`, `["power_backup","cctv","parking"]`, "9876543210",
+			`["company","anyone"]`, `["power_backup","cctv","parking"]`, "",
 			0, 1, 300+float64(i*50), "", "", "any",
 			i%3, 5, 0, 0, "",
 			cats[i], 15+float64(i), 1, 1,
