@@ -8,19 +8,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/css/styles.css" />
-  <style>
-    .verify-row { display: grid; gap: 0.45rem; }
-    .verify-actions { display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; }
-    .verify-actions input { flex: 1 1 110px; min-width: 100px; max-width: 140px; }
-    .verify-actions .btn { padding: 0.55rem 0.75rem; font-size: 0.84rem; min-height: 40px; }
-    .ok-pill { display: inline-block; font-size: 0.78rem; font-weight: 700; color: #0b1c33; background: rgba(230,180,34,0.25); padding: 0.2rem 0.5rem; border-radius: 999px; }
-    .demo-hint { font-size: 0.8rem; color: var(--ink-soft); margin: 0; }
-    .auth-panel { max-width: 420px; }
-    @media (max-width: 640px) {
-      .auth-wrap { padding: 1rem 0 2rem; }
-      .auth-panel h1 { font-size: 1.55rem; }
-    }
-  </style>
 </head>
 <body>
   <header class="site-nav">
@@ -32,44 +19,19 @@
   <main class="auth-wrap">
     <div class="panel auth-panel stack">
       <h1>Join RoomInHome</h1>
-      <p class="muted">Verify email and mobile before creating your account.</p>
+      <p class="muted">Owners list properties. Seekers find and book them.</p>
       <form id="reg-form" class="stack">
-        <label>Full name <input name="name" required autocomplete="name" /></label>
-
-        <div class="verify-row">
-          <label>Email
-            <input type="email" name="email" id="email" required autocomplete="email" placeholder="you@gmail.com" />
-          </label>
-          <div class="verify-actions">
-            <button type="button" class="btn btn-ghost" id="send-email-otp">Send code</button>
-            <input id="email-otp" inputmode="numeric" maxlength="6" placeholder="6-digit code" />
-            <button type="button" class="btn btn-primary" id="verify-email-otp">Verify</button>
-            <span id="email-ok" class="ok-pill" hidden>Email verified</span>
-          </div>
-          <p class="demo-hint" id="email-demo"></p>
-        </div>
-
-        <div class="verify-row">
-          <label>Mobile number
-            <input name="phone" id="phone" required inputmode="numeric" maxlength="10" placeholder="10-digit mobile" autocomplete="tel" />
-          </label>
-          <div class="verify-actions">
-            <button type="button" class="btn btn-ghost" id="send-phone-otp">Send code</button>
-            <input id="phone-otp" inputmode="numeric" maxlength="6" placeholder="6-digit code" />
-            <button type="button" class="btn btn-primary" id="verify-phone-otp">Verify</button>
-            <span id="phone-ok" class="ok-pill" hidden>Mobile verified</span>
-          </div>
-          <p class="demo-hint" id="phone-demo"></p>
-        </div>
-
-        <label>Password <input type="password" name="password" required minlength="6" autocomplete="new-password" /></label>
+        <label>Name <input name="name" required /></label>
+        <label>Email <input type="email" name="email" required /></label>
+        <label>Phone <input name="phone" placeholder="10-digit mobile" /></label>
+        <label>Password <input type="password" name="password" required minlength="6" /></label>
         <label>I am a
           <select name="role" id="role">
             <option value="seeker">Seeker (looking to rent)</option>
             <option value="owner">Owner (listing property)</option>
           </select>
         </label>
-        <button class="btn btn-primary" type="submit" id="reg-submit">Create account</button>
+        <button class="btn btn-primary" type="submit">Create account</button>
         <div id="msg"></div>
       </form>
       <p class="muted">Already have an account? <a href="/login.html">Log in</a></p>
@@ -80,115 +42,10 @@
     renderNav();
     const role = new URLSearchParams(location.search).get("role");
     if (role === "owner" || role === "seeker") document.getElementById("role").value = role;
-
-    let emailToken = "";
-    let phoneToken = "";
-    let emailTarget = "";
-    let phoneTarget = "";
-
-    async function sendOTP(channel, target, demoEl) {
-      const data = await api("/api/auth/send-otp", {
-        method: "POST",
-        body: JSON.stringify({ channel, target }),
-      });
-      demoEl.textContent = data.demo_code ? `Demo code: ${data.demo_code}` : (data.message || "Code sent");
-      return data;
-    }
-
-    async function verifyOTP(channel, target, code) {
-      return api("/api/auth/verify-otp", {
-        method: "POST",
-        body: JSON.stringify({ channel, target, code }),
-      });
-    }
-
-    document.getElementById("send-email-otp").addEventListener("click", async () => {
-      const msg = document.getElementById("msg");
-      msg.textContent = "";
-      try {
-        emailToken = "";
-        document.getElementById("email-ok").hidden = true;
-        const email = document.getElementById("email").value;
-        await sendOTP("email", email, document.getElementById("email-demo"));
-        emailTarget = email.trim().toLowerCase();
-      } catch (err) {
-        msg.className = "alert";
-        msg.textContent = err.message;
-      }
-    });
-
-    document.getElementById("verify-email-otp").addEventListener("click", async () => {
-      const msg = document.getElementById("msg");
-      try {
-        const email = document.getElementById("email").value;
-        const data = await verifyOTP("email", email, document.getElementById("email-otp").value);
-        emailToken = data.verified_token;
-        emailTarget = data.target;
-        document.getElementById("email-ok").hidden = false;
-        document.getElementById("email-demo").textContent = "";
-        msg.className = "alert ok";
-        msg.textContent = "Email verified";
-      } catch (err) {
-        msg.className = "alert";
-        msg.textContent = err.message;
-      }
-    });
-
-    document.getElementById("send-phone-otp").addEventListener("click", async () => {
-      const msg = document.getElementById("msg");
-      msg.textContent = "";
-      try {
-        phoneToken = "";
-        document.getElementById("phone-ok").hidden = true;
-        const phone = document.getElementById("phone").value;
-        await sendOTP("phone", phone, document.getElementById("phone-demo"));
-        phoneTarget = phone;
-      } catch (err) {
-        msg.className = "alert";
-        msg.textContent = err.message;
-      }
-    });
-
-    document.getElementById("verify-phone-otp").addEventListener("click", async () => {
-      const msg = document.getElementById("msg");
-      try {
-        const phone = document.getElementById("phone").value;
-        const data = await verifyOTP("phone", phone, document.getElementById("phone-otp").value);
-        phoneToken = data.verified_token;
-        phoneTarget = data.target;
-        document.getElementById("phone-ok").hidden = false;
-        document.getElementById("phone-demo").textContent = "";
-        msg.className = "alert ok";
-        msg.textContent = "Mobile verified";
-      } catch (err) {
-        msg.className = "alert";
-        msg.textContent = err.message;
-      }
-    });
-
-    document.getElementById("email").addEventListener("input", () => {
-      emailToken = "";
-      document.getElementById("email-ok").hidden = true;
-    });
-    document.getElementById("phone").addEventListener("input", () => {
-      phoneToken = "";
-      document.getElementById("phone-ok").hidden = true;
-    });
-
     document.getElementById("reg-form").addEventListener("submit", async (e) => {
       e.preventDefault();
       const fd = new FormData(e.target);
       const msg = document.getElementById("msg");
-      if (!emailToken) {
-        msg.className = "alert";
-        msg.textContent = "Verify your email first";
-        return;
-      }
-      if (!phoneToken) {
-        msg.className = "alert";
-        msg.textContent = "Verify your mobile number first";
-        return;
-      }
       try {
         const data = await api("/api/auth/register", {
           method: "POST",
@@ -198,8 +55,6 @@
             phone: fd.get("phone"),
             password: fd.get("password"),
             role: fd.get("role"),
-            email_token: emailToken,
-            phone_token: phoneToken,
           }),
         });
         setSession(data.token, data.user);

@@ -111,16 +111,6 @@ CREATE TABLE IF NOT EXISTS media (
 	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS otps (
-	id TEXT PRIMARY KEY,
-	channel TEXT NOT NULL CHECK(channel IN ('email', 'phone')),
-	target TEXT NOT NULL,
-	code TEXT NOT NULL,
-	expires_at DATETIME NOT NULL,
-	used INTEGER NOT NULL DEFAULT 0,
-	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
 CREATE INDEX IF NOT EXISTS idx_properties_type ON properties(type);
 CREATE INDEX IF NOT EXISTS idx_properties_city ON properties(city);
 CREATE INDEX IF NOT EXISTS idx_properties_locality ON properties(locality);
@@ -130,7 +120,6 @@ CREATE INDEX IF NOT EXISTS idx_properties_latlng ON properties(latitude, longitu
 CREATE INDEX IF NOT EXISTS idx_bookings_property ON bookings(property_id);
 CREATE INDEX IF NOT EXISTS idx_bookings_seeker ON bookings(seeker_id);
 CREATE INDEX IF NOT EXISTS idx_media_property ON media(property_id);
-CREATE INDEX IF NOT EXISTS idx_otps_target ON otps(channel, target);
 `
 	if _, err := db.Exec(schema); err != nil {
 		return fmt.Errorf("migrate: %w", err)

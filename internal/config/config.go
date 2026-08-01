@@ -13,7 +13,6 @@ type Config struct {
 	PublicBaseURL string // e.g. http://localhost:8080
 	MaxPhotoMB    int64
 	MaxVideoMB    int64
-	OTPDemo       bool // return demo OTP in API (free hosting without SMS/email)
 }
 
 func Load() Config {
@@ -25,7 +24,6 @@ func Load() Config {
 		PublicBaseURL: getEnv("PUBLIC_BASE_URL", "http://localhost:8080"),
 		MaxPhotoMB:    int64(getEnvInt("MAX_PHOTO_MB", 5)),
 		MaxVideoMB:    int64(getEnvInt("MAX_VIDEO_MB", 50)),
-		OTPDemo:       getEnv("OTP_DEMO", "true") != "false",
 	}
 }
 

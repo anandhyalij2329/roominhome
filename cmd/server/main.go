@@ -40,7 +40,6 @@ func main() {
 		PublicBaseURL: cfg.PublicBaseURL,
 		MaxPhotoBytes: cfg.MaxPhotoMB << 20,
 		MaxVideoBytes: cfg.MaxVideoMB << 20,
-		OTPDemo:       cfg.OTPDemo,
 	}
 	mux := http.NewServeMux()
 
@@ -53,8 +52,6 @@ func main() {
 
 	mux.HandleFunc("POST /api/auth/register", api.Register)
 	mux.HandleFunc("POST /api/auth/login", api.Login)
-	mux.HandleFunc("POST /api/auth/send-otp", api.SendOTP)
-	mux.HandleFunc("POST /api/auth/verify-otp", api.VerifyOTP)
 
 	auth := middleware.Auth(cfg.JWTSecret)
 	ownerOnly := middleware.RequireRole("owner")

@@ -15,7 +15,6 @@ const locStatus = document.getElementById("loc-status");
 const locCoords = document.getElementById("loc-coords");
 const ownerNameInput = document.getElementById("owner-name");
 let pendingFiles = [];
-let phoneToken = "";
 let listingCount = 0;
 
 if (user?.name) ownerNameInput.value = user.name;
@@ -39,7 +38,7 @@ function showForm(open) {
   formWrap.hidden = !open;
   if (open) {
     document.getElementById("owner-help").textContent =
-      "Fill details, verify mobile, then save. Use current location for the pin.";
+      "Fill details, then save. Use current location for the pin.";
   } else if (listingCount > 0) {
     document.getElementById("owner-help").textContent = "Your registered properties are listed below.";
   } else {
@@ -49,60 +48,12 @@ function showForm(open) {
 
 function syncFormVisibility() {
   toggleBtn.hidden = listingCount === 0;
-  // No listings → show form. Has listings → hide form until Add property.
   showForm(listingCount === 0);
 }
 
 toggleBtn.addEventListener("click", () => showForm(true));
 cancelBtn?.addEventListener("click", () => {
   if (listingCount > 0) showForm(false);
-});
-
-document.getElementById("contact-phone").addEventListener("input", () => {
-  phoneToken = "";
-  document.getElementById("contact-ok").hidden = true;
-});
-
-document.getElementById("send-contact-otp").addEventListener("click", async () => {
-  const msg = document.getElementById("form-msg");
-  const demo = document.getElementById("contact-demo");
-  try {
-    phoneToken = "";
-    document.getElementById("contact-ok").hidden = true;
-    const phone = document.getElementById("contact-phone").value;
-    const data = await api("/api/auth/send-otp", {
-      method: "POST",
-      body: JSON.stringify({ channel: "phone", target: phone }),
-    });
-    demo.textContent = data.demo_code ? `Demo code: ${data.demo_code}` : data.message || "Code sent";
-    msg.textContent = "";
-  } catch (err) {
-    msg.className = "alert";
-    msg.textContent = err.message;
-  }
-});
-
-document.getElementById("verify-contact-otp").addEventListener("click", async () => {
-  const msg = document.getElementById("form-msg");
-  try {
-    const phone = document.getElementById("contact-phone").value;
-    const data = await api("/api/auth/verify-otp", {
-      method: "POST",
-      body: JSON.stringify({
-        channel: "phone",
-        target: phone,
-        code: document.getElementById("contact-otp").value,
-      }),
-    });
-    phoneToken = data.verified_token;
-    document.getElementById("contact-ok").hidden = false;
-    document.getElementById("contact-demo").textContent = "";
-    msg.className = "alert ok";
-    msg.textContent = "Mobile verified";
-  } catch (err) {
-    msg.className = "alert";
-    msg.textContent = err.message;
-  }
 });
 
 function applyTypeUI(type) {
@@ -269,11 +220,6 @@ document.getElementById("property-form").addEventListener("submit", async (e) =>
     msg.textContent = "Please click “Use current location” first.";
     return;
   }
-  if (!phoneToken) {
-    msg.className = "alert";
-    msg.textContent = "Verify contact mobile with OTP first.";
-    return;
-  }
 
   const tenants = [...document.querySelectorAll("#tenants label")]
     .filter((lab) => lab.style.display !== "none")
@@ -304,7 +250,6 @@ document.getElementById("property-form").addEventListener("submit", async (e) =>
     available_from: form.available_from.value,
     available_until: form.available_until.value,
     contact_phone: form.contact_phone.value,
-    phone_token: phoneToken,
     furnishing: val("furnishing"),
     sharing_type: val("sharing_type"),
     gender_preference: val("gender_preference") || "any",
@@ -339,8 +284,6 @@ document.getElementById("property-form").addEventListener("submit", async (e) =>
     msg.className = "alert ok";
     msg.textContent = "Property saved.";
     pendingFiles = [];
-    phoneToken = "";
-    document.getElementById("contact-ok").hidden = true;
     renderPreview();
     form.reset();
     if (user?.name) ownerNameInput.value = user.name;

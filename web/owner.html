@@ -48,18 +48,11 @@
           <label class="full">Description <textarea name="description" placeholder="Short details about the property"></textarea></label>
         </div>
 
-        <div class="form-section-title">Contact (verify mobile)</div>
-        <div class="verify-block">
+        <div class="form-section-title">Contact</div>
+        <div class="form-grid">
           <label>Contact mobile
-            <input name="contact_phone" id="contact-phone" required inputmode="numeric" maxlength="10" placeholder="10-digit mobile" />
+            <input name="contact_phone" id="contact-phone" inputmode="numeric" maxlength="10" placeholder="10-digit mobile" />
           </label>
-          <div class="verify-actions">
-            <button type="button" class="btn btn-ghost" id="send-contact-otp">Send code</button>
-            <input id="contact-otp" inputmode="numeric" maxlength="6" placeholder="6-digit code" />
-            <button type="button" class="btn btn-primary" id="verify-contact-otp">Verify</button>
-            <span id="contact-ok" class="ok-pill" hidden>Verified</span>
-          </div>
-          <p class="demo-hint" id="contact-demo"></p>
         </div>
 
         <div class="form-section-title">Address</div>
