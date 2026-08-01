@@ -309,6 +309,9 @@ func (a *API) loadMedia(propertyID string) ([]models.Media, error) {
 }
 
 func (a *API) mediaPublicURL(relPath string) string {
+	if strings.HasPrefix(relPath, "http://") || strings.HasPrefix(relPath, "https://") {
+		return relPath
+	}
 	base := strings.TrimRight(a.PublicBaseURL, "/")
 	return base + "/uploads/" + strings.TrimLeft(filepath.ToSlash(relPath), "/")
 }
