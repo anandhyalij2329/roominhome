@@ -101,6 +101,65 @@ body.home .hero-actions .btn-ghost {
   color: #f4f7fb;
 }
 
+body.home .view-all-wrap {
+  margin-top: 1.35rem;
+  text-align: center;
+}
+
+@media (max-width: 800px) {
+  body.home .hero {
+    align-items: center;
+    justify-items: center;
+    min-height: 92vh;
+    min-height: 92dvh;
+  }
+
+  body.home .hero-scrim {
+    background:
+      linear-gradient(180deg, rgba(11, 28, 51, 0.55) 0%, rgba(11, 28, 51, 0.72) 45%, rgba(11, 28, 51, 0.88) 100%);
+  }
+
+  body.home .hero-content {
+    text-align: center;
+    max-width: 100%;
+    margin-inline: auto;
+    padding: 5.5rem 1.1rem 3.5rem;
+  }
+
+  body.home .hero-brand {
+    font-size: clamp(2.6rem, 14vw, 3.8rem);
+  }
+
+  body.home .hero h1 {
+    max-width: 18ch;
+    margin-inline: auto;
+  }
+
+  body.home .hero-content > p {
+    margin-inline: auto;
+    max-width: 34ch;
+  }
+
+  body.home .hero-actions {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  body.home .section-head {
+    text-align: center;
+  }
+
+  body.home .section-head p {
+    margin-inline: auto;
+  }
+
+  body.home #home-listings.grid {
+    grid-template-columns: 1fr;
+    max-width: 26rem;
+    margin-inline: auto;
+  }
+}
+
 /* Suit your needs — search strip */
 .suit-section {
   margin-top: -2.5rem;

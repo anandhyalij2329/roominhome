@@ -133,7 +133,7 @@
       <div class="grid" id="home-listings">
         <div class="empty">Loading listings…</div>
       </div>
-      <p style="margin-top:1.25rem">
+      <p class="view-all-wrap">
         <a class="btn btn-ghost" href="/browse.html">View all listings</a>
       </p>
     </div>
@@ -241,7 +241,8 @@
         const el = document.getElementById("home-listings");
         const items = list || [];
         document.getElementById("stat-props").textContent = items.length + "+";
-        const show = items.slice(0, 8);
+        const isMobile = window.matchMedia("(max-width: 700px)").matches;
+        const show = items.slice(0, isMobile ? 2 : 8);
         if (!show.length) {
           el.innerHTML = `<div class="empty">No listings yet. <a href="/register.html?role=owner">List the first property</a>.</div>`;
           return;
