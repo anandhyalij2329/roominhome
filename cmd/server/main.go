@@ -12,6 +12,7 @@ import (
 	"room-rental/internal/database"
 	"room-rental/internal/handlers"
 	"room-rental/internal/middleware"
+	"room-rental/internal/seed"
 )
 
 func main() {
@@ -27,6 +28,11 @@ func main() {
 	}
 	defer db.Close()
 
+	if n, err := seed.SeedIfEmpty(db); err != nil {
+		log.Printf("seed warning: %v", err)
+	} else if n > 0 {
+		log.Printf("seeded %d demo properties (empty database)", n)
+	}
 	api := &handlers.API{
 		DB:            db,
 		JWTSecret:     cfg.JWTSecret,
