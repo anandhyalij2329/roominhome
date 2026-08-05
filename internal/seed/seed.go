@@ -40,9 +40,10 @@ func SeedIfEmpty(db *sql.DB) (int, error) {
 }
 
 // EnsureAdmin creates the default admin account if missing.
-// Login: admin@roominhome.test / admin123
+// Login: admin@adnivara.test / admin123
 func EnsureAdmin(db *sql.DB) error {
-	const email = "admin@roominhome.test"
+	const email = "admin@adnivara.test"
+	_, _ = db.Exec(`UPDATE users SET email = ? WHERE email = ?`, email, "admin@roominhome.test")
 	var id string
 	err := db.QueryRow(`SELECT id FROM users WHERE email = ?`, email).Scan(&id)
 	if err == nil {
@@ -64,11 +65,13 @@ func EnsureAdmin(db *sql.DB) error {
 
 // ClearSeedContacts removes demo contact numbers from seed users/properties.
 func ClearSeedContacts(db *sql.DB) error {
+	_, _ = db.Exec(`UPDATE users SET email = ? WHERE email = ?`, "owner@adnivara.test", "owner@roominhome.test")
+	_, _ = db.Exec(`UPDATE users SET email = ? WHERE email = ?`, "seeker@adnivara.test", "seeker@roominhome.test")
 	if _, err := db.Exec(`UPDATE properties SET contact_phone = '' WHERE id LIKE 'seed-%'`); err != nil {
 		return err
 	}
-	_, err := db.Exec(`UPDATE users SET phone = '' WHERE id LIKE 'seed-%' OR email IN (?, ?)`,
-		"owner@roominhome.test", "seeker@roominhome.test")
+	_, err := db.Exec(`UPDATE users SET phone = '' WHERE id LIKE 'seed-%' OR email IN (?, ?, ?, ?)`,
+		"owner@adnivara.test", "seeker@adnivara.test", "owner@roominhome.test", "seeker@roominhome.test")
 	return err
 }
 
@@ -95,17 +98,17 @@ func Run(db *sql.DB) (int, error) {
 	if _, err := db.Exec(`DELETE FROM properties`); err != nil {
 		return 0, err
 	}
-	if _, err := db.Exec(`DELETE FROM users WHERE id LIKE 'seed-%' OR email IN (?, ?)`,
-		"owner@roominhome.test", "seeker@roominhome.test"); err != nil {
+	if _, err := db.Exec(`DELETE FROM users WHERE id LIKE 'seed-%' OR email IN (?, ?, ?, ?)`,
+		"owner@adnivara.test", "seeker@adnivara.test", "owner@roominhome.test", "seeker@roominhome.test"); err != nil {
 		return 0, err
 	}
 
 	if err := exec(db, `INSERT INTO users (id, name, email, password_hash, role, phone, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-		ownerID, "Suresh Patil", "owner@roominhome.test", ownerHash, "owner", "", now); err != nil {
+		ownerID, "Suresh Patil", "owner@adnivara.test", ownerHash, "owner", "", now); err != nil {
 		return 0, err
 	}
 	if err := exec(db, `INSERT INTO users (id, name, email, password_hash, role, phone, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-		seekerID, "Ananya Deshmukh", "seeker@roominhome.test", seekerHash, "seeker", "", now); err != nil {
+		seekerID, "Ananya Deshmukh", "seeker@adnivara.test", seekerHash, "seeker", "", now); err != nil {
 		return 0, err
 	}
 

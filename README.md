@@ -25,19 +25,19 @@ go run ./cmd/seed
 
 | Role | Email | Password |
 |------|-------|----------|
-| Owner | `owner@roominhome.test` | `owner123` |
-| Seeker | `seeker@roominhome.test` | `seeker123` |
+| Owner | `owner@adnivara.test` | `owner123` |
+| Seeker | `seeker@adnivara.test` | `seeker123` |
 
 Seed adds **40 Pune properties**: 10 room · 10 home · 10 PG · 10 shop.
 
 ## Domain
 
-Production domain: **https://roominhome.com**
+Production domain: **https://www.adnivara.com**
 
 When live, set:
 
 ```bash
-PUBLIC_BASE_URL=https://roominhome.com
+PUBLIC_BASE_URL=https://www.adnivara.com
 JWT_SECRET=your-long-random-secret
 ```
 
@@ -47,7 +47,7 @@ Local run still uses `http://localhost:8080`.
 |-----|---------|
 | `PORT` | `8080` |
 | `UPLOAD_DIR` | `uploads` |
-| `PUBLIC_BASE_URL` | `http://localhost:8080` (prod: `https://roominhome.com`) |
+| `PUBLIC_BASE_URL` | `http://localhost:8080` (prod: `https://www.adnivara.com`) |
 | `MAX_PHOTO_MB` | `5` |
 | `MAX_VIDEO_MB` | `50` |
 

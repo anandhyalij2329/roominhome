@@ -1,23 +1,29 @@
 const API = "";
 
 function getToken() {
-  return localStorage.getItem("roominhome_token") || "";
+  return localStorage.getItem("adnivara_token") || localStorage.getItem("roominhome_token") || "";
 }
 
 function getUser() {
   try {
-    return JSON.parse(localStorage.getItem("roominhome_user") || "null");
+    return JSON.parse(
+      localStorage.getItem("adnivara_user") || localStorage.getItem("roominhome_user") || "null"
+    );
   } catch {
     return null;
   }
 }
 
 function setSession(token, user) {
-  localStorage.setItem("roominhome_token", token);
-  localStorage.setItem("roominhome_user", JSON.stringify(user));
+  localStorage.setItem("adnivara_token", token);
+  localStorage.setItem("adnivara_user", JSON.stringify(user));
+  localStorage.removeItem("roominhome_token");
+  localStorage.removeItem("roominhome_user");
 }
 
 function clearSession() {
+  localStorage.removeItem("adnivara_token");
+  localStorage.removeItem("adnivara_user");
   localStorage.removeItem("roominhome_token");
   localStorage.removeItem("roominhome_user");
 }

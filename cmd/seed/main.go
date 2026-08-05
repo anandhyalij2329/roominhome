@@ -22,6 +22,6 @@ func main() {
 		log.Fatal(err)
 	}
 	fmt.Printf("\nSeeded %d properties (10 room + 10 home + 10 pg + 10 shop).\n", n)
-	fmt.Println("Owner : owner@roominhome.test / owner123")
-	fmt.Println("Seeker: seeker@roominhome.test / seeker123")
+	fmt.Println("Owner : owner@adnivara.test / owner123")
+	fmt.Println("Seeker: seeker@adnivara.test / seeker123")
 }

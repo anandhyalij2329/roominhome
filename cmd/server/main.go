@@ -97,7 +97,7 @@ func main() {
 	handler := middleware.CORS(apiAwareJSON(mux))
 
 	addr := ":" + cfg.Port
-	fmt.Printf("RoomInHome running on http://localhost%s\n", addr)
+	fmt.Printf("Adnivara running on http://localhost%s\n", addr)
 	if webDir != "" {
 		fmt.Printf("UI: http://localhost%s/  (web dir: %s)\n", addr, webDir)
 	}

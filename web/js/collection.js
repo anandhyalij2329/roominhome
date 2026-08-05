@@ -57,7 +57,7 @@ const type = (qs("type") || "room").toLowerCase();
 const meta = META[type] || META.room;
 let extraQuery = {};
 
-document.title = `${meta.title} - RoomInHome`;
+document.title = `${meta.title} - Adnivara`;
 renderNav(type);
 document.getElementById("hero-img").src = meta.img;
 document.getElementById("hero-title").textContent = meta.title;

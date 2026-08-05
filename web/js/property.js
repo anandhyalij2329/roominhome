@@ -29,7 +29,7 @@ function haversineKm(lat1, lon1, lat2, lon2) {
 async function load() {
   try {
     const p = await api(`/api/properties/${id}`);
-    document.title = `${p.title} - RoomInHome`;
+    document.title = `${p.title} - Adnivara`;
     renderNav(p.type || "");
     const media = p.media || [];
     const photos = media.filter((m) => m.type === "photo");
